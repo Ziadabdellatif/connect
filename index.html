@@ -125,4 +125,93 @@
       <h3>بيانات العقار</h3>
       <label>نوع العقار *</label>
       <select name="property_type" required>
-        <option v
+        <option value="">اختر نوع العقار</option>
+        <option>فيلا</option>
+        <option>أرض</option>
+        <option>شقة</option>
+        <option>شاليه</option>
+        <option>تجاري</option>
+      </select>
+      <label>المدينة / المنطقة *</label>
+      <input type="text" name="city" required>
+      <label>كود الوحدة *</label>
+      <input type="text" name="unit_code" required>
+      <label>ملاحظات</label>
+      <textarea name="notes" placeholder="أي ملاحظات إضافية..."></textarea>
+    </div>
+
+    <button type="submit">إرسال البيانات</button>
+  </form>
+
+  <div class="footer">
+    <p>📊 عدد العملاء: <span id="leadCount">0</span></p>
+    <button onclick="showLeads()">عرض العملاء</button>
+    <div id="leadsList"></div>
+  </div>
+</div>
+
+<script>
+  const endpoint = "https://script.google.com/macros/s/AKfycbxDH_m2NR-WhN0oNRg1zUVlKpMnXDwDeOd9JvjYzhf7dJJXsaaac422KViE4WJLTrOLuw/exec";
+
+  const form = document.getElementById("leadForm");
+  const refPhone = document.getElementById("referrerPhone");
+  const clientPhone = document.getElementById("clientPhone");
+  const refError = document.getElementById("referrerPhoneError");
+  const clientError = document.getElementById("clientPhoneError");
+  const leadCount = document.getElementById("leadCount");
+  const leadsList = document.getElementById("leadsList");
+
+  function validatePhone(input, errorDiv) {
+    const valid = /^01\d{9}$/.test(input.value.trim());
+    errorDiv.style.display = valid ? 'none' : 'block';
+    return valid;
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (!validatePhone(refPhone, refError) || !validatePhone(clientPhone, clientError)) return;
+
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+    data.timestamp = new Date().toLocaleString();
+
+    const leads = JSON.parse(localStorage.getItem("leads") || "[]");
+    leads.push(data);
+    localStorage.setItem("leads", JSON.stringify(leads));
+    updateCount();
+
+    fetch(endpoint, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(data)
+    })
+    .then(() => {
+      alert("✅ تم التسجيل بنجاح");
+      form.reset();
+    })
+    .catch(() => {
+      alert("❌ خطأ أثناء الإرسال");
+    });
+  });
+
+  function updateCount() {
+    const leads = JSON.parse(localStorage.getItem("leads") || "[]");
+    leadCount.textContent = leads.length;
+  }
+
+  function showLeads() {
+    const leads = JSON.parse(localStorage.getItem("leads") || "[]");
+    leadsList.innerHTML = leads.length
+      ? leads.map(l => `
+        <div class="lead-item">
+          🧑‍💼 ${l.client_name} - ${l.client_phone}<br>
+          🏠 ${l.property_type} - ${l.city}<br>
+          🕒 ${l.timestamp}
+        </div>`).join('')
+      : '<p>لا توجد بيانات.</p>';
+  }
+
+  updateCount();
+</script>
+</body>
+</html>
