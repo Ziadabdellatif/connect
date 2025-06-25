@@ -1,0 +1,217 @@
+<!-- v2.4 - HTML Only + Google Sheet Integration + Sections UI -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>تسجيل عميل</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fff;
+      padding: 20px;
+      margin: 0;
+    }
+    .container {
+      max-width: 540px;
+      margin: auto;
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 15px;
+    }
+    .logo {
+      text-align: center;
+    }
+    .logo img {
+      width: 100px;
+      border-radius: 12px;
+    }
+    .slogan {
+      text-align: center;
+      margin: 10px 0 20px;
+      font-size: 16px;
+      color: #444;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    .section {
+      background: #f2f2f2;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+    }
+    .section.client { background: #e6f7ef; }
+    .section.property { background: #f7edff; }
+    .section h3 {
+      margin: 0 0 10px;
+      font-size: 17px;
+      color: #333;
+    }
+    label {
+      font-size: 14px;
+      margin-bottom: 3px;
+      display: block;
+    }
+    input, select, textarea, button {
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    textarea { resize: vertical; }
+    button {
+      background-color: #007bff;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .lead-item {
+      background: #fdfdfd;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px dashed #ccc;
+      font-size: 14px;
+    }
+    .error-message {
+      color: red;
+      font-size: 13px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="logo">
+    <img src="https://iili.io/FTZ5qFI.png" alt="شعار">
+  </div>
+  <div class="slogan">من غير ما تبيع .... تقدر تكسب 💰</div>
+  <h2>تسجيل بيانات العميل</h2>
+
+  <form id="leadForm">
+    <div class="section">
+      <h3>بيانات المسوق</h3>
+      <label>اسم المسوق *</label>
+      <input type="text" name="referrer_name" required>
+      <label>رقم هاتف المسوق *</label>
+      <input type="text" name="referrer_phone" id="referrerPhone" required placeholder="01xxxxxxxxx">
+      <div id="referrerPhoneError" class="error-message">⚠️ الرقم غير صحيح</div>
+    </div>
+
+    <div class="section client">
+      <h3>بيانات العميل</h3>
+      <label>اسم العميل *</label>
+      <input type="text" name="client_name" required>
+      <label>رقم هاتف العميل *</label>
+      <input type="text" name="client_phone" id="clientPhone" required placeholder="01xxxxxxxxx">
+      <div id="clientPhoneError" class="error-message">⚠️ الرقم غير صحيح</div>
+    </div>
+
+    <div class="section property">
+      <h3>بيانات العقار</h3>
+      <label>نوع العقار *</label>
+      <select name="property_type" required>
+        <option value="">اختر نوع العقار</option>
+        <option>فيلا</option>
+        <option>أرض</option>
+        <option>شقة</option>
+        <option>شاليه</option>
+        <option>تجاري</option>
+      </select>
+      <label>المدينة / المنطقة *</label>
+      <input type="text" name="city" required>
+      <label>كود الوحدة *</label>
+      <input type="text" name="unit_code" required>
+      <label>ملاحظات</label>
+      <textarea name="notes" placeholder="أي ملاحظات إضافية..."></textarea>
+    </div>
+
+    <button type="submit">إرسال البيانات</button>
+  </form>
+
+  <div class="footer">
+    <p>📊 عدد العملاء: <span id="leadCount">0</span></p>
+    <button onclick="showLeads()">عرض العملاء</button>
+    <div id="leadsList"></div>
+  </div>
+</div>
+
+<script>
+  const endpoint = "https://script.google.com/macros/s/AKfycbxDH_m2NR-WhN0oNRg1zUVlKpMnXDwDeOd9JvjYzhf7dJJXsaaac422KViE4WJLTrOLuw/exec";
+
+  const form = document.getElementById("leadForm");
+  const refPhone = document.getElementById("referrerPhone");
+  const clientPhone = document.getElementById("clientPhone");
+  const refError = document.getElementById("referrerPhoneError");
+  const clientError = document.getElementById("clientPhoneError");
+  const leadCount = document.getElementById("leadCount");
+  const leadsList = document.getElementById("leadsList");
+
+  function validatePhone(input, errorDiv) {
+    const valid = /^01\d{9}$/.test(input.value.trim());
+    errorDiv.style.display = valid ? 'none' : 'block';
+    return valid;
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (!validatePhone(refPhone, refError) || !validatePhone(clientPhone, clientError)) return;
+
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+    data.timestamp = new Date().toLocaleString();
+
+    const leads = JSON.parse(localStorage.getItem("leads") || "[]");
+    leads.push(data);
+    localStorage.setItem("leads", JSON.stringify(leads));
+    updateCount();
+
+    fetch(endpoint, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(data)
+    })
+    .then(() => {
+      alert("✅ تم التسجيل بنجاح");
+      form.reset();
+    })
+    .catch(() => {
+      alert("❌ خطأ أثناء الإرسال");
+    });
+  });
+
+  function updateCount() {
+    const leads = JSON.parse(localStorage.getItem("leads") || "[]");
+    leadCount.textContent = leads.length;
+  }
+
+  function showLeads() {
+    const leads = JSON.parse(localStorage.getItem("leads") || "[]");
+    leadsList.innerHTML = leads.length
+      ? leads.map(l => `
+        <div class="lead-item">
+          🧑‍💼 ${l.client_name} - ${l.client_phone}<br>
+          🏠 ${l.property_type} - ${l.city}<br>
+          🕒 ${l.timestamp}
+        </div>`).join('')
+      : '<p>لا توجد بيانات.</p>';
+  }
+
+  updateCount();
+</script>
+</body>
+</html>
