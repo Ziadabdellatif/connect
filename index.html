@@ -155,8 +155,8 @@
   form.addEventListener("submit", function (e) {
     e.preventDefault();
 
-    const refPhone = document.getElementById("referrerPhone").value;
-    const clientPhone = document.getElementById("clientPhone").value;
+    const refPhone = document.getElementById("referrerPhone").value.trim();
+    const clientPhone = document.getElementById("clientPhone").value.trim();
 
     if (!/^01\d{9}$/.test(refPhone) || !/^01\d{9}$/.test(clientPhone)) {
       alert("رقم الهاتف يجب أن يبدأ بـ 01 ويتكون من 11 رقم");
@@ -167,24 +167,23 @@
     const data = Object.fromEntries(formData.entries());
     data.timestamp = new Date().toLocaleString();
 
-    // حفظ محلي
     const leads = JSON.parse(localStorage.getItem("leads") || "[]");
     leads.push(data);
     localStorage.setItem("leads", JSON.stringify(leads));
     updateCount();
 
-    // إرسال إلى Google Script
     fetch(endpoint, {
       method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify(data)
+      body: new FormData(form)
     })
     .then(res => res.text())
-    .then(() => {
+    .then(responseText => {
+      console.log("Response:", responseText);
       form.reset();
       popup.style.display = "flex";
     })
-    .catch(() => {
+    .catch(error => {
+      console.error("Error:", error);
       alert("❌ حدث خطأ أثناء الإرسال");
     });
   });
