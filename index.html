@@ -7,7 +7,7 @@
   <style>
     body {
       font-family: 'Arial', sans-serif;
-      background: #f7f9fc;
+      background: #f2f2f2;
       margin: 0;
       padding: 20px;
     }
@@ -106,14 +106,14 @@
 
     <label>رقم هاتف المسوق</label>
     <input type="text" name="referrer_phone" id="referrerPhone" required>
-    <div class="error" id="referrerPhoneError">⚠️ يجب كتابة رقم يبدأ بـ 01 ويتكون من 11 رقم</div>
+    <div class="error" id="referrerPhoneError">⚠️ الرقم يجب أن يبدأ بـ 01 ويتكون من 11 رقم</div>
 
     <label>اسم العميل</label>
     <input type="text" name="client_name" required>
 
     <label>رقم هاتف العميل</label>
     <input type="text" name="client_phone" id="clientPhone" required>
-    <div class="error" id="clientPhoneError">⚠️ يجب كتابة رقم يبدأ بـ 01 ويتكون من 11 رقم</div>
+    <div class="error" id="clientPhoneError">⚠️ الرقم يجب أن يبدأ بـ 01 ويتكون من 11 رقم</div>
 
     <label>نوع العقار</label>
     <select name="property_type" required>
@@ -134,7 +134,7 @@
     <label>ملاحظات</label>
     <textarea name="notes" rows="3"></textarea>
 
-    <button type="submit">إرسال البيانات</button>
+    <button type="submit">إرسال</button>
   </form>
 </div>
 
@@ -147,7 +147,7 @@
 </div>
 
 <script>
-  const endpoint = "https://script.google.com/macros/s/AKfycbw0XrUPnl7Hx1pmvcjd-BSTSzXrz_r8jW6X1MtsCB5zkC_hDWjU_7hG5OZUpbvzqzsE/exec";
+  const endpoint = "https://script.google.com/macros/s/AKfycbxMaLPGVG5kfrRZXZCMozIUUWNVXMaZgfeIYAFIAdfMk8hm4kCbiptCXlTUk7p1E_At/exec";
 
   const form = document.getElementById("leadForm");
   const refInput = document.getElementById("referrerPhone");
