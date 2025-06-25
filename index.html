@@ -4,45 +4,45 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>نموذج تسجيل العملاء</title>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal&display=swap" rel="stylesheet" />
   <style>
     body {
       margin: 0;
       font-family: 'Tajawal', sans-serif;
-      background-color: #f0f0f0;
+      background-color: #f2f2f2;
+      color: #333;
     }
     .container {
       max-width: 600px;
       margin: 2rem auto;
       background: #fff;
+      border-radius: 12px;
       padding: 2rem;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
     }
     h2 {
       text-align: center;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
     }
     label {
       display: block;
-      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
     }
     input, select, textarea {
       width: 100%;
-      padding: 0.5rem;
-      margin-top: 0.5rem;
-      border: 1px solid #ccc;
+      padding: 0.75rem;
       border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-bottom: 1rem;
       font-size: 1rem;
-      box-sizing: border-box;
+      font-family: inherit;
     }
     button {
-      margin-top: 1.5rem;
-      padding: 0.75rem;
-      width: 100%;
       background-color: #4CAF50;
       color: white;
       border: none;
+      padding: 0.75rem 1.5rem;
       border-radius: 8px;
       font-size: 1rem;
       cursor: pointer;
@@ -55,72 +55,47 @@
       margin-top: 1rem;
       font-weight: bold;
     }
-    .view-leads {
+    .view-leads-btn {
       display: block;
       margin: 1rem auto;
-      padding: 0.5rem 1rem;
       background-color: #2196F3;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      text-align: center;
     }
     .modal {
       display: none;
       position: fixed;
-      z-index: 1;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.4);
+      z-index: 1000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.5);
     }
     .modal-content {
       background-color: #fff;
       margin: 15% auto;
       padding: 2rem;
-      border: 1px solid #888;
+      border-radius: 12px;
       width: 80%;
       max-width: 400px;
       text-align: center;
-      border-radius: 10px;
+      font-size: 1.2rem;
     }
-    .close {
-      color: #aaa;
-      float: left;
-      font-size: 28px;
-      font-weight: bold;
-      margin-top: -1rem;
-    }
-    .close:hover,
-    .close:focus {
-      color: black;
-      text-decoration: none;
-      cursor: pointer;
-    }
-    table {
+    .leads-table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 1rem;
     }
-    th, td {
-      border: 1px solid #ddd;
+    .leads-table th, .leads-table td {
+      border: 1px solid #ccc;
       padding: 0.5rem;
-      text-align: right;
-    }
-    th {
-      background-color: #f2f2f2;
+      text-align: center;
     }
     .whatsapp-support {
       text-align: center;
       margin: 2rem 0;
     }
     .whatsapp-support a {
+      font-size: 2rem;
       text-decoration: none;
       color: #25D366;
-      font-size: 2rem;
     }
     .whatsapp-support p {
       margin: 0.5rem 0 0;
@@ -135,25 +110,25 @@
     <h2>نموذج تسجيل العملاء</h2>
     <form id="leadForm">
       <label for="marketerName">اسم المسوق</label>
-      <input type="text" id="marketerName" name="marketerName" required>
+      <input type="text" id="marketerName" name="marketerName" required />
 
       <label for="marketerPhone">رقم هاتف المسوق</label>
-      <input type="tel" id="marketerPhone" name="marketerPhone" required>
+      <input type="tel" id="marketerPhone" name="marketerPhone" required />
 
       <label for="clientName">اسم العميل</label>
-      <input type="text" id="clientName" name="clientName" required>
+      <input type="text" id="clientName" name="clientName" required />
 
       <label for="clientPhone">رقم هاتف العميل</label>
-      <input type="tel" id="clientPhone" name="clientPhone" required>
+      <input type="tel" id="clientPhone" name="clientPhone" required />
 
       <label for="propertyType">نوع العقار</label>
-      <input type="text" id="propertyType" name="propertyType" required>
+      <input type="text" id="propertyType" name="propertyType" required />
 
-      <label for="areaCity">المنطقة/المدينة</label>
-      <input type="text" id="areaCity" name="areaCity" required>
+      <label for="areaCity">المنطقة / المدينة</label>
+      <input type="text" id="areaCity" name="areaCity" required />
 
       <label for="unitCode">كود الوحدة</label>
-      <input type="text" id="unitCode" name="unitCode" required>
+      <input type="text" id="unitCode" name="unitCode" required />
 
       <label for="notes">ملاحظات</label>
       <textarea id="notes" name="notes" rows="3"></textarea>
@@ -162,8 +137,14 @@
     </form>
 
     <div class="lead-counter" id="leadCounter">إجمالي العملاء: 0</div>
-    <button class="view-leads" id="viewLeadsBtn">👁️ عرض العملاء</button>
+    <button class="view-leads-btn" id="viewLeadsBtn">👁️ عرض العملاء</button>
     <div id="leadsTableContainer"></div>
+  </div>
+
+  <div class="modal" id="successModal">
+    <div class="modal-content">
+      ✅ تم إرسال البيانات بنجاح
+    </div>
   </div>
 
   <div class="whatsapp-support">
@@ -171,86 +152,40 @@
     <p>تواصل مع الدعم</p>
   </div>
 
-  <div id="successModal" class="modal">
-    <div class="modal-content">
-      <span class="close" id="closeModal">&times;</span>
-      <p>✅ تم إرسال البيانات بنجاح</p>
-    </div>
-  </div>
-
   <script>
     const form = document.getElementById('leadForm');
+    const successModal = document.getElementById('successModal');
     const leadCounter = document.getElementById('leadCounter');
     const viewLeadsBtn = document.getElementById('viewLeadsBtn');
     const leadsTableContainer = document.getElementById('leadsTableContainer');
-    const successModal = document.getElementById('successModal');
-    const closeModal = document.getElementById('closeModal');
 
-    const updateLeadCounter = () => {
+    function updateLeadCounter() {
       const leads = JSON.parse(localStorage.getItem('leads') || '[]');
       leadCounter.textContent = 'إجمالي العملاء: ' + leads.length;
-    };
+    }
 
-    const showSuccessModal = () => {
+    function showModal() {
       successModal.style.display = 'block';
-    };
-
-    closeModal.onclick = function() {
-      successModal.style.display = 'none';
-    };
-
-    window.onclick = function(event) {
-      if (event.target == successModal) {
+      setTimeout(() => {
         successModal.style.display = 'none';
-      }
-    };
+      }, 2000);
+    }
 
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const data = {
-        marketerName: form.marketerName.value,
-        marketerPhone: form.marketerPhone.value,
-        clientName: form.clientName.value,
-        clientPhone: form.clientPhone.value,
-        propertyType: form.propertyType.value,
-        areaCity: form.areaCity.value,
-        unitCode: form.unitCode.value,
-        notes: form.notes.value,
-        timestamp: new Date().toISOString()
-      };
-
-      // Send POST request
-      fetch('https://script.google.com/macros/s/AKfycbxDH_m2NR-WhN0oNRg1zUVlKpMnXDwDeOd9JvjYzhf7dJJXsaaac422KViE4WJLTrOLuw/exec', {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
-
-      // Save to LocalStorage
+    function saveLead(data) {
       const leads = JSON.parse(localStorage.getItem('leads') || '[]');
-      leads.push(data);
+      leads.push({ ...data, timestamp: new Date().toISOString() });
       localStorage.setItem('leads', JSON.stringify(leads));
+    }
 
-      // Reset form
-      form.reset();
-
-      // Update counter
-      updateLeadCounter();
-
-      // Show success modal
-      showSuccessModal();
-    });
-
-    viewLeadsBtn.addEventListener('click', function() {
+    function displayLeads() {
       const leads = JSON.parse(localStorage.getItem('leads') || '[]');
       if (leads.length === 0) {
-        leadsTableContainer.innerHTML = '<p style="text-align:center;">لا توجد بيانات لعرضها.</p>';
+        leadsTableContainer.innerHTML = '<p>لا توجد بيانات لعرضها.</p>';
         return;
       }
-      let tableHTML = '<table><thead><tr><th>اسم المسوق</th><th>رقم المسوق</th><th>اسم العميل</th><th>رقم العميل</th><th>نوع العقار</th><th>المنطقة/المدينة</th><th>كود الوحدة</th><th>ملاحظات</th><th>الوقت</th></tr></thead><tbody>';
+      let tableHTML = '<table class="leads-table"><thead><tr>';
+      tableHTML += '<th>اسم المسوق</th><th>رقم المسوق</th><th>اسم العميل</th><th>رقم العميل</th><th>نوع العقار</th><th>المنطقة</th><th>كود الوحدة</th><th>ملاحظات</th><th>الوقت</th>';
+      tableHTML += '</tr></thead><tbody>';
       leads.forEach(lead => {
         tableHTML += `<tr>
           <td>${lead.marketerName}</td>
@@ -261,6 +196,48 @@
           <td>${lead.areaCity}</td>
           <td>${lead.unitCode}</td>
           <td>${lead.notes}</td>
-          <td>${new Date(lead.timestamp).toLocaleString()}</td
-::contentReference[oaicite:0]{index=0}
- 
+          <td>${new Date(lead.timestamp).toLocaleString('ar-EG')}</td>
+        </tr>`;
+      });
+      tableHTML += '</tbody></table>';
+      leadsTableContainer.innerHTML = tableHTML;
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = {
+        marketerName: form.marketerName.value,
+        marketerPhone: form.marketerPhone.value,
+        clientName: form.clientName.value,
+        clientPhone: form.clientPhone.value,
+        propertyType: form.propertyType.value,
+        areaCity: form.areaCity.value,
+        unitCode: form.unitCode.value,
+        notes: form.notes.value
+      };
+      try {
+        await fetch('https://script.google.com/macros/s/AKfycbxDH_m2NR-WhN0oNRg1zUVlKpMnXDwDeOd9JvjYzhf7dJJXsaaac422KViE4WJLTrOLuw/exec', {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+        saveLead(data);
+        form.reset();
+        updateLeadCounter();
+        showModal();
+      } catch (error) {
+        alert('حدث خطأ أثناء الإرسال. حاول مرة أخرى.');
+      }
+    });
+
+    viewLeadsBtn.addEventListener('click', displayLeads);
+
+    // Initialize
+    updateLeadCounter();
+  </script>
+
+</body>
+</html>
