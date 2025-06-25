@@ -1,80 +1,66 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>تسجيل عميل</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Cairo', sans-serif;
-      background: #f0f2f5;
+      background: #f4f4f4;
       margin: 0;
       padding: 20px;
     }
+
     .container {
-      max-width: 650px;
+      max-width: 600px;
       margin: auto;
       background: #fff;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    .logo {
+
+    h2 {
       text-align: center;
       margin-bottom: 20px;
     }
-    .logo img {
-      width: 120px;
-    }
-    h2 {
-      text-align: center;
-      color: #333;
-      margin-bottom: 25px;
-    }
+
     label {
-      display: block;
-      margin-bottom: 5px;
       font-weight: bold;
-      color: #444;
+      margin-top: 10px;
+      display: block;
     }
+
     input, select, textarea, button {
       width: 100%;
-      padding: 12px;
-      margin-bottom: 18px;
-      border-radius: 10px;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 15px;
       border: 1px solid #ccc;
-      font-size: 15px;
+      border-radius: 8px;
+      font-size: 14px;
     }
+
     button {
-      background-color: #007bff;
+      background: #28a745;
       color: white;
       font-weight: bold;
-      border: none;
-      transition: background-color 0.3s;
       cursor: pointer;
     }
-    button:hover {
-      background-color: #0056b3;
-    }
-    .footer {
-      text-align: center;
-      margin-top: 20px;
-      color: #555;
-    }
+
     .toast {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      background-color: #28a745;
-      color: #fff;
+      background: #28a745;
+      color: white;
       padding: 15px 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      border-radius: 10px;
       opacity: 0;
       transition: opacity 0.4s ease-in-out;
-      z-index: 1000;
     }
+
     .toast.show {
       opacity: 1;
     }
@@ -83,11 +69,7 @@
 <body>
 
 <div class="container">
-  <div class="logo">
-    <img src="https://iili.io/FTZ5qFI.png" alt="شعار">
-  </div>
   <h2>تسجيل عميل جديد</h2>
-
   <form id="leadForm">
     <label>اسم المسوق</label>
     <input type="text" name="referrer_name" required>
@@ -104,14 +86,13 @@
     <label>نوع العقار</label>
     <select name="property_type" required>
       <option value="">اختر نوع العقار</option>
+      <option>شقة</option>
       <option>فيلا</option>
       <option>أرض</option>
-      <option>شقة</option>
-      <option>شاليه</option>
       <option>تجاري</option>
     </select>
 
-    <label>المنطقة / المدينة</label>
+    <label>المدينة</label>
     <input type="text" name="city" required>
 
     <label>كود الوحدة</label>
@@ -122,30 +103,24 @@
 
     <button type="submit">إرسال</button>
   </form>
-
-  <div class="footer">
-    💼 عدد العملاء المحلي: <span id="leadCount">0</span>
-    <br><br>
-    <button onclick="sendTestData()">إرسال بيانات تجريبية</button>
-  </div>
 </div>
 
 <div class="toast" id="toast">تم الإرسال بنجاح ✅</div>
 
 <script>
-  const endpoint = "https://script.google.com/macros/s/AKfycbwAYi36Vj6VozSza49STY-2qWCk9H6ohggzO1XqTvcJbuKvgstgZG0GZgB2FAZfSkFW/exec";
+  const endpoint = "رابط_الـ_Google_Apps_Script_بتاعك";
+
   const form = document.getElementById("leadForm");
   const toast = document.getElementById("toast");
-  const leadCount = document.getElementById("leadCount");
 
-  form.addEventListener("submit", function (e) {
+  form.addEventListener("submit", function(e) {
     e.preventDefault();
 
     const refPhone = document.getElementById("referrerPhone").value.trim();
     const clientPhone = document.getElementById("clientPhone").value.trim();
 
     if (!/^01\d{9}$/.test(refPhone) || !/^01\d{9}$/.test(clientPhone)) {
-      showToast("❌ رقم الهاتف غير صالح");
+      showToast("❌ رقم الهاتف غير صحيح");
       return;
     }
 
@@ -153,69 +128,26 @@
     const data = Object.fromEntries(formData.entries());
     data.timestamp = new Date().toLocaleString();
 
-    const leads = JSON.parse(localStorage.getItem("leads") || "[]");
-    leads.push(data);
-    localStorage.setItem("leads", JSON.stringify(leads));
-    updateCount();
-
     fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data)
     })
     .then(res => res.text())
-    .then(() => {
+    .then(msg => {
+      showToast("✅ " + msg);
       form.reset();
-      showToast("✅ تم الإرسال بنجاح");
     })
     .catch(() => {
       showToast("❌ حدث خطأ أثناء الإرسال");
     });
   });
 
-  function updateCount() {
-    const leads = JSON.parse(localStorage.getItem("leads") || "[]");
-    leadCount.textContent = leads.length;
-  }
-
-  function showToast(msg) {
-    toast.textContent = msg;
+  function showToast(message) {
+    toast.textContent = message;
     toast.classList.add("show");
     setTimeout(() => toast.classList.remove("show"), 3000);
   }
-
-  function sendTestData() {
-    const testData = {
-      referrer_name: "المسوق التجريبي",
-      referrer_phone: "01000000001",
-      client_name: "عميل تجريبي",
-      client_phone: "01000000002",
-      property_type: "شقة",
-      city: "الرياض",
-      unit_code: "TEST123",
-      notes: "هذا مجرد اختبار 🔧",
-      timestamp: new Date().toLocaleString()
-    };
-
-    fetch(endpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(testData)
-    })
-    .then(res => res.text())
-    .then(msg => {
-      showToast("✅ " + msg);
-      const leads = JSON.parse(localStorage.getItem("leads") || "[]");
-      leads.push(testData);
-      localStorage.setItem("leads", JSON.stringify(leads));
-      updateCount();
-    })
-    .catch(() => {
-      showToast("❌ فشل الإرسال التجريبي");
-    });
-  }
-
-  updateCount();
 </script>
 
 </body>
