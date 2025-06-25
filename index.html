@@ -2,41 +2,148 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>نموذج تسجيل</title>
+  <title>نموذج تسجيل عميل</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: sans-serif; background: #f2f2f2; padding: 20px; }
-    .container { background: white; max-width: 600px; margin: auto; padding: 30px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-    .logo img { width: 100px; border-radius: 12px; display: block; margin: auto; }
-    .slogan { text-align: center; margin: 10px 0 20px; color: #555; }
-    input, select, textarea { width: 100%; padding: 10px; margin: 10px 0; border-radius: 8px; border: 1px solid #ccc; }
-    button { background: #007bff; color: white; padding: 12px; border: none; border-radius: 8px; width: 100%; }
-    .success { text-align: center; color: green; margin-top: 15px; }
+    body {
+      background: #f8f9fa;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 650px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.08);
+    }
+    .logo {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    .logo img {
+      width: 110px;
+      border-radius: 18px;
+    }
+    .slogan {
+      text-align: center;
+      font-size: 17px;
+      margin-bottom: 30px;
+      color: #444;
+    }
+    label {
+      font-weight: bold;
+      margin-top: 12px;
+      display: block;
+      color: #333;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      font-size: 15px;
+    }
+    .error {
+      font-size: 13px;
+      color: red;
+      display: none;
+      margin-top: 4px;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 20px;
+      background-color: #28a745;
+      color: white;
+      font-size: 17px;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+    }
+    .success-message {
+      display: none;
+      text-align: center;
+      margin-top: 15px;
+      color: green;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="logo"><img src="https://iili.io/FTZ5qFI.png" alt="logo"></div>
+    <div class="logo">
+      <img src="https://iili.io/FTZ5qFI.png" alt="Logo">
+    </div>
     <div class="slogan">من غير ما تبيع .... تقدر تكسب 💰</div>
+
     <form id="leadForm">
-      <input type="text" name="referrer_name" placeholder="اسم المسوق" required>
-      <input type="text" name="referrer_phone" placeholder="رقم المسوق" required>
-      <input type="text" name="client_name" placeholder="اسم العميل" required>
-      <input type="text" name="client_phone" placeholder="رقم العميل" required>
+      <label>اسم المسوق</label>
+      <input type="text" name="referrer_name" required>
+
+      <label>رقم المسوق</label>
+      <input type="text" name="referrer_phone" id="referrerPhone" required>
+      <div class="error" id="referrerPhoneError">⚠️ يجب أن يبدأ الرقم بـ01 ويتكون من 11 رقم</div>
+
+      <label>اسم العميل</label>
+      <input type="text" name="client_name" required>
+
+      <label>رقم العميل</label>
+      <input type="text" name="client_phone" id="clientPhone" required>
+      <div class="error" id="clientPhoneError">⚠️ يجب أن يبدأ الرقم بـ01 ويتكون من 11 رقم</div>
+
+      <label>نوع العقار</label>
       <select name="property_type" required>
-        <option value="">نوع العقار</option>
-        <option>فيلا</option><option>أرض</option><option>شقة</option><option>شاليه</option><option>تجاري</option>
+        <option value="">اختر نوع العقار</option>
+        <option>فيلا</option>
+        <option>أرض</option>
+        <option>شقة</option>
+        <option>شاليه</option>
+        <option>تجاري</option>
       </select>
-      <input type="text" name="city" placeholder="المدينة" required>
-      <input type="text" name="unit_code" placeholder="كود الوحدة" required>
-      <textarea name="notes" placeholder="ملاحظات"></textarea>
+
+      <label>المدينة / المنطقة</label>
+      <input type="text" name="city" required>
+
+      <label>كود الوحدة</label>
+      <input type="text" name="unit_code" required>
+
+      <label>ملاحظات</label>
+      <textarea name="notes" rows="3"></textarea>
+
       <button type="submit">إرسال</button>
     </form>
-    <div class="success" id="successMsg" style="display:none;">✅ تم الإرسال بنجاح</div>
+
+    <div class="success-message" id="successMsg">✅ تم الإرسال بنجاح وسنتواصل معك قريبًا</div>
   </div>
 
   <script>
+    const refInput = document.getElementById("referrerPhone");
+    const clientInput = document.getElementById("clientPhone");
+    const refError = document.getElementById("referrerPhoneError");
+    const clientError = document.getElementById("clientPhoneError");
+
+    function validatePhone(phone) {
+      return /^01\d{9}$/.test(phone);
+    }
+
+    refInput.addEventListener("input", () => {
+      refError.style.display = validatePhone(refInput.value) ? "none" : "block";
+    });
+
+    clientInput.addEventListener("input", () => {
+      clientError.style.display = validatePhone(clientInput.value) ? "none" : "block";
+    });
+
     document.getElementById("leadForm").addEventListener("submit", function(e) {
       e.preventDefault();
+
+      if (!validatePhone(refInput.value)) return refError.style.display = "block";
+      if (!validatePhone(clientInput.value)) return clientError.style.display = "block";
+
       const formData = new FormData(this);
       const data = Object.fromEntries(formData.entries());
       data.timestamp = new Date().toLocaleString();
