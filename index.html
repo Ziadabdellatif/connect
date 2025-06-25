@@ -3,21 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>تسجيل عميل</title>
+  <title>نموذج تسجيل عميل</title>
   <style>
     body {
-      font-family: 'Cairo', sans-serif;
-      background: #f4f4f4;
-      margin: 0;
+      font-family: 'Tahoma', sans-serif;
+      background-color: #f5f5f5;
       padding: 20px;
     }
 
     .container {
       max-width: 600px;
       margin: auto;
-      background: #fff;
-      padding: 25px;
-      border-radius: 12px;
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
 
@@ -28,8 +27,8 @@
 
     label {
       font-weight: bold;
-      margin-top: 10px;
       display: block;
+      margin-top: 10px;
     }
 
     input, select, textarea, button {
@@ -37,28 +36,34 @@
       padding: 10px;
       margin-top: 5px;
       margin-bottom: 15px;
-      border: 1px solid #ccc;
       border-radius: 8px;
+      border: 1px solid #ccc;
       font-size: 14px;
     }
 
     button {
-      background: #28a745;
+      background-color: #28a745;
       color: white;
-      font-weight: bold;
+      border: none;
       cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #218838;
     }
 
     .toast {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      background: #28a745;
-      color: white;
-      padding: 15px 20px;
+      background-color: #28a745;
+      color: #fff;
+      padding: 12px 20px;
       border-radius: 10px;
       opacity: 0;
       transition: opacity 0.4s ease-in-out;
+      z-index: 999;
     }
 
     .toast.show {
@@ -102,25 +107,26 @@
     <textarea name="notes" rows="3"></textarea>
 
     <button type="submit">إرسال</button>
+    <button type="button" onclick="sendTestData()">إرسال بيانات تجريبية</button>
   </form>
 </div>
 
-<div class="toast" id="toast">تم الإرسال بنجاح ✅</div>
+<div class="toast" id="toast">جارٍ الإرسال...</div>
 
 <script>
-  const endpoint = "رابط_الـ_Google_Apps_Script_بتاعك";
+  const endpoint = "https://script.google.com/macros/s/AKfycbwAYi36Vj6VozSza49STY-2qWCk9H6ohggzO1XqTvcJbuKvgstgZG0GZgB2FAZfSkFW/exec";
 
   const form = document.getElementById("leadForm");
   const toast = document.getElementById("toast");
 
-  form.addEventListener("submit", function(e) {
+  form.addEventListener("submit", function (e) {
     e.preventDefault();
 
     const refPhone = document.getElementById("referrerPhone").value.trim();
     const clientPhone = document.getElementById("clientPhone").value.trim();
 
     if (!/^01\d{9}$/.test(refPhone) || !/^01\d{9}$/.test(clientPhone)) {
-      showToast("❌ رقم الهاتف غير صحيح");
+      showToast("❌ رقم الهاتف يجب أن يبدأ بـ 01 ويكون 11 رقم");
       return;
     }
 
@@ -130,13 +136,15 @@
 
     fetch(endpoint, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify(data)
     })
     .then(res => res.text())
     .then(msg => {
-      showToast("✅ " + msg);
       form.reset();
+      showToast("✅ " + msg);
     })
     .catch(() => {
       showToast("❌ حدث خطأ أثناء الإرسال");
@@ -147,6 +155,35 @@
     toast.textContent = message;
     toast.classList.add("show");
     setTimeout(() => toast.classList.remove("show"), 3000);
+  }
+
+  function sendTestData() {
+    const testData = {
+      referrer_name: "مسوق تجريبي",
+      referrer_phone: "01000000001",
+      client_name: "عميل تجريبي",
+      client_phone: "01000000002",
+      property_type: "شقة",
+      city: "القاهرة",
+      unit_code: "TEST-123",
+      notes: "بيانات اختبارية",
+      timestamp: new Date().toLocaleString()
+    };
+
+    fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(testData)
+    })
+    .then(res => res.text())
+    .then(msg => {
+      showToast("✅ " + msg);
+    })
+    .catch(() => {
+      showToast("❌ فشل إرسال البيانات التجريبية");
+    });
   }
 </script>
 
