@@ -2,262 +2,351 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>نموذج تسجيل عميل - V1.3</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نموذج تسجيل عميل</title>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    body {
-      margin: 0;
-      font-family: 'Tajawal', sans-serif;
-      background-color: #f6f5f2;
-      color: #2e2e2e;
-    }
-    .container {
-      max-width: 720px;
-      margin: 2rem auto;
-      background-color: #fff;
-      border-radius: 12px;
-      padding: 2rem 2.5rem;
-      box-shadow: 0 0 12px rgba(0,0,0,0.08);
-    }
-    .logo {
-      text-align: center;
-      margin-bottom: 1rem;
-    }
-    .logo img {
-      max-width: 130px;
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 1.5rem;
-      font-weight: 700;
-      color: #3a3a3a;
-    }
-    label {
-      display: block;
-      margin-bottom: 0.4rem;
-      font-weight: 600;
-    }
+    body { margin: 0; font-family: 'Tajawal', sans-serif; background: #f7f9fb; color: #2e2e2e; }
+    .container { max-width: 720px; margin: 2rem auto; background: #fff; border-radius: 16px; padding: 2rem; box-shadow: 0 0 15px rgba(0,0,0,0.08); }
+    .logo { text-align: center; margin-bottom: 1rem; }
+    .logo img { max-width: 120px; border-radius: 50%; border: 2px solid #eee; }
+    h2 { text-align: center; margin-bottom: 2rem; color: #3b3b3b; }
+    label { display: block; margin-top: 1rem; font-weight: bold; }
     input, select, textarea {
-      width: 100%;
-      padding: 0.75rem;
-      margin-bottom: 1.2rem;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      font-size: 1rem;
-      background-color: #fafafa;
+      width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #ccc;
+      margin-top: 0.3rem; margin-bottom: 0.7rem; background: #f9f9f9;
     }
-    button {
-      background-color: #3b7a57;
-      color: white;
-      border: none;
-      padding: 0.9rem;
-      width: 100%;
-      font-size: 1rem;
-      border-radius: 10px;
-      cursor: pointer;
+    input:read-only {
+      background: #e9ecef; color: #6c757d; cursor: not-allowed;
     }
-    button:hover {
-      background-color: #356d4d;
+    button { width: 100%; padding: 0.9rem; background: #3b7a57; border: none;
+      color: #fff; font-size: 1rem; border-radius: 10px; cursor: pointer; margin-top: 1rem;
     }
-    .lead-counter {
-      text-align: center;
-      font-weight: bold;
-      margin-top: 1rem;
+    .show-leads-btn {
+      background: #17a2b8; margin-top: 2rem; display: none;
     }
-    .view-leads-btn {
-      background-color: #007bff;
-      margin-top: 1rem;
-    }
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 999;
-      left: 0; top: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(0,0,0,0.4);
+    .show-leads-btn:hover { background: #138496; }
+    .modal { display: none; position: fixed; left: 0; top: 0;
+      width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000;
     }
     .modal-content {
-      background-color: #fff;
-      margin: 20% auto;
-      padding: 2rem;
-      border-radius: 10px;
-      width: 90%;
-      max-width: 400px;
-      text-align: center;
-      font-size: 1.2rem;
+      background: #fff; margin: 15% auto; padding: 2rem;
+      max-width: 450px; border-radius: 12px; text-align: center; font-weight: bold;
     }
-    .leads-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 1.5rem;
+    .modal-content::before { content: '✔️'; font-size: 2rem; color: green; display: block; margin-bottom: 0.5rem; }
+    .modal-content.error { color: #c0392b; }
+    .modal-content.error::before { content: '❌'; color: #c0392b; }
+    .verification-modal .modal-content::before { content: '⚠️'; color: #ff9800; }
+    .verification-modal .modal-content { color: #333; }
+    .modal-buttons { margin-top: 1.5rem; }
+    .modal-buttons button {
+      margin: 0 0.5rem; padding: 0.7rem 1.5rem; border: none; border-radius: 8px;
+      cursor: pointer; font-weight: bold; width: auto;
     }
-    .leads-table th, .leads-table td {
-      border: 1px solid #ddd;
-      padding: 0.6rem;
-      font-size: 0.95rem;
-      background-color: #fff;
-      text-align: center;
-    }
-    .whatsapp-support {
-      text-align: center;
-      margin: 3rem 0 2rem;
-    }
-    .whatsapp-support a {
-      display: inline-block;
-      font-size: 2rem;
-      color: #25D366;
-      text-decoration: none;
-    }
-    .whatsapp-support p {
-      margin-top: 0.4rem;
-      font-size: 0.85rem;
-      color: #444;
-    }
+    .confirm-btn { background: #28a745; color: white; }
+    .cancel-btn { background: #dc3545; color: white; }
+    .phone-warning, .locked-message { color: red; font-size: 0.85rem; display: none; }
+    .leads-table { width: 100%; border-collapse: collapse; margin-top: 2rem; }
+    .leads-table th, .leads-table td { border: 1px solid #ddd; padding: 0.6rem; text-align: center; }
+    .leads-table th { background: #f0f0f0; }
+    #leadsTableContainer { margin-top: 2rem; }
   </style>
 </head>
 <body>
-
   <div class="container">
-    <div class="logo">
-      <img src="https://iili.io/FuT8Alt.png" alt="logo">
-    </div>
+    <div class="logo"><img src="https://iili.io/FuT8Alt.png" alt="Logo"></div>
     <h2>نموذج تسجيل عميل جديد</h2>
-
     <form id="leadForm">
       <label for="referrerName">اسم المسوق</label>
-      <input type="text" id="referrerName" name="referrerName" required>
-
+      <input type="text" id="referrerName" required>
       <label for="referrerPhone">رقم هاتف المسوق</label>
-      <input type="tel" id="referrerPhone" name="referrerPhone" required>
-
+      <input type="tel" id="referrerPhone" required>
+      <div id="refPhoneWarning" class="phone-warning">⚠️ يجب أن يبدأ الرقم بـ 01 ويتكون من 11 رقمًا</div>
+      <div id="lockNotice" class="locked-message">❗ للتعديل، الرجاء التواصل مع الدعم.</div>
       <label for="clientName">اسم العميل</label>
-      <input type="text" id="clientName" name="clientName" required>
-
+      <input type="text" id="clientName" required>
       <label for="clientPhone">رقم هاتف العميل</label>
-      <input type="tel" id="clientPhone" name="clientPhone" required>
-
+      <input type="tel" id="clientPhone" required>
+      <div id="clientPhoneWarning" class="phone-warning">⚠️ يجب أن يبدأ الرقم بـ 01 ويتكون من 11 رقمًا</div>
       <label for="propertyType">نوع العقار</label>
-      <select id="propertyType" name="propertyType" required>
+      <select id="propertyType" required>
         <option disabled selected>اختر نوع العقار</option>
-        <option>شقة</option>
-        <option>أرض</option>
-        <option>شاليه</option>
-        <option>فيلا</option>
-        <option>دوبلكس</option>
-        <option>تجاري</option>
+        <option>شقة</option><option>أرض</option><option>شاليه</option>
+        <option>فيلا</option><option>دوبلكس</option><option>تجاري</option>
       </select>
-
       <label for="areaCity">المنطقة / المدينة</label>
-      <input type="text" id="areaCity" name="areaCity" required>
-
+      <input type="text" id="areaCity" required>
       <label for="unitCode">كود الوحدة</label>
-      <input type="text" id="unitCode" name="unitCode" required>
-
+      <input type="text" id="unitCode" required>
       <label for="notes">ملاحظات</label>
-      <textarea id="notes" name="notes" rows="3"></textarea>
-
+      <textarea id="notes" rows="3"></textarea>
       <button type="submit">📤 إرسال البيانات</button>
     </form>
-
-    <div class="lead-counter" id="leadCounter">إجمالي العملاء: 0</div>
-    <button class="view-leads-btn" id="viewLeadsBtn">👁️ عرض العملاء</button>
+    
+    <button id="showLeadsBtn" class="show-leads-btn">📋 عرض العملاء المسجلين</button>
     <div id="leadsTableContainer"></div>
   </div>
-
+  
+  <!-- Success Modal -->
   <div class="modal" id="successModal">
-    <div class="modal-content">✅ تم إرسال البيانات بنجاح</div>
+    <div class="modal-content">تم إرسال البيانات بنجاح</div>
   </div>
-
-  <div class="whatsapp-support">
-    <a href="https://wa.me/+20199706301" target="_blank">📱</a>
-    <p>تواصل مع الدعم</p>
+  
+  <!-- Error Modal -->
+  <div class="modal" id="errorModal">
+    <div class="modal-content error">حدث خطأ أثناء الإرسال، الرجاء التواصل مع الدعم.</div>
   </div>
-
+  
+  <!-- Verification Modal -->
+  <div class="modal verification-modal" id="verificationModal">
+    <div class="modal-content">
+      <p><strong>تأكيد بيانات المسوق</strong></p>
+      <p>⚠️ تأكد من صحة البيانات التالية:</p>
+      <div id="verificationData" style="margin: 1rem 0; padding: 1rem; background: #f8f9fa; border-radius: 8px; text-align: right;"></div>
+      <p><strong style="color: #dc3545;">هذه البيانات لن يمكن تعديلها بعد التأكيد!</strong></p>
+      <div class="modal-buttons">
+        <button class="confirm-btn" id="confirmData">✅ تأكيد وإرسال</button>
+        <button class="cancel-btn" id="cancelData">❌ إلغاء</button>
+      </div>
+    </div>
+  </div>
+  
   <script>
+    // إضافة مصفوفة لتخزين الليدات محليًا
+    let leadsStorage = [];
+
+    // Global error handlers
+    window.addEventListener('error', (event) => {
+      console.error('Global error:', event.error);
+    });
+    
+    window.addEventListener('unhandledrejection', (event) => {
+      console.error('Unhandled promise rejection:', event.reason);
+      event.preventDefault();
+    });
+    
     const form = document.getElementById('leadForm');
-    const successModal = document.getElementById('successModal');
-    const leadCounter = document.getElementById('leadCounter');
-    const viewLeadsBtn = document.getElementById('viewLeadsBtn');
+    const nameInput = form.referrerName;
+    const phoneInput = form.referrerPhone;
+    const lockNotice = document.getElementById('lockNotice');
+    const phoneWarning = document.getElementById('refPhoneWarning');
     const leadsTableContainer = document.getElementById('leadsTableContainer');
-
-    function updateLeadCounter() {
-      const leads = JSON.parse(localStorage.getItem('leads') || '[]');
-      leadCounter.textContent = 'إجمالي العملاء: ' + leads.length;
+    const showLeadsBtn = document.getElementById('showLeadsBtn');
+    const endpoint = 'https://script.google.com/macros/s/AKfycbyT8o2WxNZr3tqSJ8DR76DzvoGfV1tNBkhFiE7mYnSsohM9WeAaYP2RbBbYLbhz8lO5/exec';
+    
+    let marketerDataLocked = false;
+    let pendingSubmissionData = null;
+    
+    function validatePhone(phone) { 
+      return /^01\d{9}$/.test(phone.trim()); 
     }
-
-    function showModal() {
-      successModal.style.display = 'block';
-      setTimeout(() => {
-        successModal.style.display = 'none';
-      }, 2000);
-    }
-
-    function saveLead(data) {
-      const leads = JSON.parse(localStorage.getItem('leads') || '[]');
-      leads.push({ ...data, timestamp: new Date().toISOString() });
-      localStorage.setItem('leads', JSON.stringify(leads));
-    }
-
-    function displayLeads() {
-      const leads = JSON.parse(localStorage.getItem('leads') || '[]');
-      if (leads.length === 0) {
-        leadsTableContainer.innerHTML = '<p>لا توجد بيانات لعرضها.</p>';
-        return;
+    
+    function showModal(modalId) {
+      const modal = document.getElementById(modalId);
+      modal.style.display = 'block';
+      if (modalId !== 'verificationModal') {
+        setTimeout(() => { modal.style.display = 'none'; }, 2500);
       }
-      let html = '<table class="leads-table"><thead><tr>';
-      html += '<th>المسوق</th><th>هاتفه</th><th>العميل</th><th>هاتف العميل</th><th>العقار</th><th>المنطقة</th><th>الكود</th><th>ملاحظات</th><th>الوقت</th>';
-      html += '</tr></thead><tbody>';
-      leads.forEach(lead => {
-        html += `<tr>
-          <td>${lead.referrerName}</td>
-          <td>${lead.referrerPhone}</td>
-          <td>${lead.clientName}</td>
-          <td>${lead.clientPhone}</td>
-          <td>${lead.propertyType}</td>
-          <td>${lead.areaCity}</td>
-          <td>${lead.unitCode}</td>
-          <td>${lead.notes}</td>
-          <td>${new Date(lead.timestamp).toLocaleString('ar-EG')}</td>
-        </tr>`;
-      });
-      html += '</tbody></table>';
-      leadsTableContainer.innerHTML = html;
     }
-
+    
+    function hideModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+    }
+    
+    // Real-time validation for client phone
+    document.getElementById('clientPhone').addEventListener('input', () => {
+      document.getElementById('clientPhoneWarning').style.display = 
+        validatePhone(form.clientPhone.value) ? 'none' : 'block';
+    });
+    
+    // Real-time validation for referrer phone
+    phoneInput.addEventListener('input', () => {
+      if (!marketerDataLocked) {
+        phoneWarning.style.display = validatePhone(phoneInput.value) ? 'none' : 'block';
+      }
+    });
+    
+    // Handle click on locked inputs
+    function handleLockedInputClick(inputElement) {
+      if (marketerDataLocked) {
+        lockNotice.style.display = 'block';
+        setTimeout(() => {
+          lockNotice.style.display = 'none';
+        }, 3000);
+      }
+    }
+    
+    nameInput.addEventListener('click', () => handleLockedInputClick(nameInput));
+    phoneInput.addEventListener('click', () => handleLockedInputClick(phoneInput));
+    
+    // Show leads button functionality
+    showLeadsBtn.addEventListener('click', () => {
+      if (marketerDataLocked) {
+        fetchLeads(phoneInput.value.trim());
+      }
+    });
+    
+    // Verification modal handlers
+    document.getElementById('confirmData').addEventListener('click', async () => {
+      hideModal('verificationModal');
+      await submitData(pendingSubmissionData);
+    });
+    
+    document.getElementById('cancelData').addEventListener('click', () => {
+      hideModal('verificationModal');
+      pendingSubmissionData = null;
+    });
+    
+    // Form submission handler
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      
+      const refName = nameInput.value.trim();
+      const refPhone = phoneInput.value.trim();
+      const clientPhone = form.clientPhone.value.trim();
+      
+      // Validate referrer phone
+      if (!validatePhone(refPhone)) { 
+        phoneWarning.style.display = 'block'; 
+        return; 
+      }
+      
+      // Validate client phone
+      if (!validatePhone(clientPhone)) {
+        document.getElementById('clientPhoneWarning').style.display = 'block'; 
+        return;
+      }
+      
+      // Hide warnings if validation passes
+      phoneWarning.style.display = 'none';
+      document.getElementById('clientPhoneWarning').style.display = 'none';
+      
       const data = {
-        referrerName: form.referrerName.value,
-        referrerPhone: form.referrerPhone.value,
-        clientName: form.clientName.value,
-        clientPhone: form.clientPhone.value,
+        timestamp: new Date().toISOString(),
+        referrerName: refName,
+        referrerPhone: refPhone,
+        clientName: form.clientName.value.trim(),
+        clientPhone: clientPhone,
         propertyType: form.propertyType.value,
-        areaCity: form.areaCity.value,
-        unitCode: form.unitCode.value,
-        notes: form.notes.value
+        areaCity: form.areaCity.value.trim(),
+        unitCode: form.unitCode.value.trim(),
+        notes: form.notes.value.trim()
       };
+      
+      // If marketer data is not locked yet, show verification modal
+      if (!marketerDataLocked) {
+        document.getElementById('verificationData').innerHTML = `
+          <p><strong>اسم المسوق:</strong> ${refName}</p>
+          <p><strong>رقم هاتف المسوق:</strong> ${refPhone}</p>
+        `;
+        pendingSubmissionData = data;
+        showModal('verificationModal');
+      } else {
+        // If already locked, submit directly
+        await submitData(data);
+      }
+    });
+    
+    async function submitData(data) {
       try {
-        await fetch('https://script.google.com/macros/s/AKfycbwpmLsoh9iZZZ5pgGNYwHcI_mMvhSaXyJxcVhm1O9IMGfYYzs9MKcpXN18klLHc1EWY/exec', {
+        console.log('Sending data:', data);
+        
+        const response = await fetch(endpoint, {
           method: 'POST',
           mode: 'no-cors',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify(data)
         });
-        saveLead(data);
-        form.reset();
-        updateLeadCounter();
-        showModal();
-      } catch (error) {
-        alert('حدث خطأ أثناء الإرسال. حاول مرة أخرى.');
+        
+        console.log('Data sent successfully');
+
+        // حفظ البيانات في leadsStorage
+        leadsStorage.push(data);
+
+        // Wait a moment before showing success to ensure data is processed
+        setTimeout(() => {
+          // Lock marketer data after first successful submission
+          if (!marketerDataLocked) {
+            marketerDataLocked = true;
+            nameInput.readOnly = true;
+            phoneInput.readOnly = true;
+            showLeadsBtn.style.display = 'block';
+          }
+          
+          lockNotice.style.display = 'none';
+          showModal("successModal");
+          
+          // Reset form but keep marketer info
+          const tempRefName = nameInput.value;
+          const tempRefPhone = phoneInput.value;
+          form.reset();
+          nameInput.value = tempRefName;
+          phoneInput.value = tempRefPhone;
+          
+          // Clear pending data
+          pendingSubmissionData = null;
+        }, 500);
+        
+      } catch (error) { 
+        console.error('Error sending data:', error);
+        showModal("errorModal");
+      }
+    }
+    
+    async function fetchLeads(phone) {
+      if (!phone || !validatePhone(phone)) {
+        leadsTableContainer.innerHTML = '<p style="color: red;">⚠️ رقم هاتف غير صحيح</p>';
+        return;
+      }
+      
+      leadsTableContainer.innerHTML = '<p>جاري تحميل العملاء...</p>';
+      
+      try {
+        console.log('Fetching leads for phone:', phone);
+        
+        // العثور على الليدات المحفوظة في leadsStorage
+        const leads = leadsStorage.filter(lead => lead.referrerPhone === phone);
+        
+        if (leads.length === 0) {
+          leadsTableContainer.innerHTML = '<p>لا توجد عملاء مسجلين بعد. <br><small>تأكد من أن البيانات تم حفظها مسبقًا.</small></p>';
+          return;
+        }
+        
+        let html = '<h3>📋 العملاء المسجلين للمسوق: ' + nameInput.value + '</h3>';
+        html += '<table class="leads-table"><thead><tr>' +
+                 '<th>التاريخ</th><th>اسم العميل</th><th>رقم الهاتف</th><th>العقار</th>' +
+                 '<th>المدينة</th><th>الكود</th><th>الحالة</th>' +
+                 '</tr></thead><tbody>';
+        
+        leads.forEach(lead => {
+          html += `<tr>
+            <td><strong>${new Date(lead.timestamp).toLocaleString('ar-EG')}</strong></td>
+            <td>${lead.clientName || ''}</td>
+            <td>${lead.clientPhone || ''}</td>
+            <td>${lead.propertyType || ''}</td>
+            <td>${lead.areaCity || ''}</td>
+            <td>${lead.unitCode || ''}</td>
+            <td><strong style="color: #28a745;">جاري المتابعة</strong></td>
+          </tr>`;
+        });
+        
+        html += '</tbody></table>';
+        leadsTableContainer.innerHTML = html;
+        
+      } catch (error) { 
+        console.error('Error fetching leads:', error);
+        leadsTableContainer.innerHTML = '<p style="color: red;">⚠️ فشل تحميل البيانات.</p>'; 
+      }
+    }
+    
+    // Handle modal clicks to close them
+    document.addEventListener('click', (e) => {
+      if (e.target.classList.contains('modal') && !e.target.classList.contains('verification-modal')) {
+        e.target.style.display = 'none';
       }
     });
-
-    viewLeadsBtn.addEventListener('click', displayLeads);
-    updateLeadCounter();
   </script>
-
 </body>
 </html>
