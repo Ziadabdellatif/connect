@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
   <title>تسجيل عميل</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Arial', sans-serif;
       background: #fff;
-      padding: 20px;
       margin: 0;
+      padding: 20px;
     }
     .container {
       max-width: 540px;
@@ -27,13 +27,13 @@
     }
     .slogan {
       text-align: center;
-      margin: 10px 0 20px;
       font-size: 16px;
+      margin: 10px 0 20px;
       color: #444;
     }
     h2 {
       text-align: center;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
     }
     .section {
       background: #f2f2f2;
@@ -43,43 +43,34 @@
     }
     .section.client { background: #e6f7ef; }
     .section.property { background: #f7edff; }
-    .section h3 {
-      margin: 0 0 10px;
-      font-size: 17px;
-      color: #333;
-    }
     label {
-      font-size: 14px;
-      margin-bottom: 3px;
       display: block;
+      margin-bottom: 5px;
+      font-size: 14px;
     }
     input, select, textarea, button {
       width: 100%;
       padding: 10px;
-      font-size: 14px;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       border-radius: 10px;
       border: 1px solid #ccc;
+      font-size: 14px;
       box-sizing: border-box;
     }
-    textarea { resize: vertical; }
     button {
-      background-color: #007bff;
+      background-color: #28a745;
       color: white;
       font-weight: bold;
       cursor: pointer;
       border: none;
-    }
-    button:hover {
-      background-color: #0056b3;
     }
     .footer {
       text-align: center;
       margin-top: 20px;
     }
     .lead-item {
-      background: #fdfdfd;
-      margin: 10px 0;
+      background: #fefefe;
+      margin-top: 10px;
       padding: 10px;
       border-radius: 10px;
       border: 1px dashed #ccc;
@@ -90,6 +81,34 @@
       font-size: 13px;
       display: none;
     }
+
+    /* ✅ Popup */
+    .popup {
+      display: none;
+      position: fixed;
+      top: 0; right: 0; bottom: 0; left: 0;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    .popup-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 0 10px #00000030;
+      max-width: 300px;
+    }
+    .popup-content h3 {
+      color: #28a745;
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    .popup-content button {
+      background: #28a745;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -99,11 +118,11 @@
     <img src="https://iili.io/FTZ5qFI.png" alt="شعار">
   </div>
   <div class="slogan">من غير ما تبيع .... تقدر تكسب 💰</div>
+
   <h2>تسجيل بيانات العميل</h2>
 
   <form id="leadForm">
     <div class="section">
-      <h3>بيانات المسوق</h3>
       <label>اسم المسوق *</label>
       <input type="text" name="referrer_name" required>
       <label>رقم هاتف المسوق *</label>
@@ -112,7 +131,6 @@
     </div>
 
     <div class="section client">
-      <h3>بيانات العميل</h3>
       <label>اسم العميل *</label>
       <input type="text" name="client_name" required>
       <label>رقم هاتف العميل *</label>
@@ -121,7 +139,6 @@
     </div>
 
     <div class="section property">
-      <h3>بيانات العقار</h3>
       <label>نوع العقار *</label>
       <select name="property_type" required>
         <option value="">اختر نوع العقار</option>
@@ -131,12 +148,12 @@
         <option>شاليه</option>
         <option>تجاري</option>
       </select>
-      <label>المدينة / المنطقة *</label>
+      <label>المنطقة / المدينة *</label>
       <input type="text" name="city" required>
       <label>كود الوحدة *</label>
       <input type="text" name="unit_code" required>
       <label>ملاحظات</label>
-      <textarea name="notes" placeholder="أي ملاحظات إضافية..."></textarea>
+      <textarea name="notes" placeholder="ملاحظات إضافية..."></textarea>
     </div>
 
     <button type="submit">إرسال البيانات</button>
@@ -149,8 +166,17 @@
   </div>
 </div>
 
+<!-- ✅ Popup -->
+<div class="popup" id="popup">
+  <div class="popup-content">
+    <h3>✅ تم إرسال البيانات</h3>
+    <p>سنتواصل معك قريبًا.</p>
+    <button onclick="closePopup()">تم</button>
+  </div>
+</div>
+
 <script>
-  const endpoint = "https://script.google.com/macros/s/AKfycbxWsrjzCD5QQbBFCpEGWeUlloF3OrEtFo7OcoMCGcj7H8sSu4EauAGkFo18SuOwBFeqDg/exec";
+  const endpoint = "https://script.google.com/macros/s/AKfycbzNyU2PY-w0WkJxgNs9CoyoYr0Ke7qrqS1NoP_oD2JI6JKdV7JgwBfC_SAJ4pTPE90q/exec";
 
   const form = document.getElementById("leadForm");
   const refPhone = document.getElementById("referrerPhone");
@@ -159,6 +185,7 @@
   const clientError = document.getElementById("clientPhoneError");
   const leadCount = document.getElementById("leadCount");
   const leadsList = document.getElementById("leadsList");
+  const popup = document.getElementById("popup");
 
   function validatePhone(input, errorDiv) {
     const valid = /^01\d{9}$/.test(input.value.trim());
@@ -185,11 +212,11 @@
       body: JSON.stringify(data)
     })
     .then(() => {
-      alert("✅ تم التسجيل بنجاح");
       form.reset();
+      showPopup();
     })
     .catch(() => {
-      alert("❌ خطأ أثناء الإرسال");
+      alert("❌ حدث خطأ أثناء الإرسال");
     });
   });
 
@@ -207,10 +234,19 @@
           🏠 ${l.property_type} - ${l.city}<br>
           🕒 ${l.timestamp}
         </div>`).join('')
-      : '<p>لا توجد بيانات.</p>';
+      : '<p>لا توجد بيانات محفوظة.</p>';
+  }
+
+  function showPopup() {
+    popup.style.display = "flex";
+  }
+
+  function closePopup() {
+    popup.style.display = "none";
   }
 
   updateCount();
 </script>
+
 </body>
 </html>
