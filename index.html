@@ -5,84 +5,72 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>تسجيل عميل</title>
   <style>
-    * {box-sizing: border-box;}
     body {
       font-family: 'Arial', sans-serif;
-      background: #f5f7fa;
+      background: #f7f9fc;
       margin: 0;
-      padding: 0;
+      padding: 20px;
     }
     .container {
-      max-width: 620px;
-      margin: 40px auto;
+      max-width: 650px;
+      margin: auto;
       background: #fff;
-      padding: 30px 25px;
-      border-radius: 20px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      padding: 30px;
+      border-radius: 18px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.08);
     }
     .logo {
       text-align: center;
     }
     .logo img {
       width: 110px;
-      border-radius: 20px;
+      border-radius: 18px;
     }
     .slogan {
       text-align: center;
-      color: #666;
       font-size: 16px;
       margin: 10px 0 25px;
+      color: #555;
     }
     h2 {
       text-align: center;
-      color: #333;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
+      color: #222;
     }
     label {
-      font-weight: bold;
       display: block;
-      margin: 12px 0 5px;
-      color: #333;
+      margin-top: 12px;
+      font-weight: bold;
     }
     input, select, textarea {
       width: 100%;
       padding: 12px;
-      border-radius: 12px;
+      margin-top: 6px;
+      border-radius: 10px;
       border: 1px solid #ccc;
       font-size: 14px;
-      transition: border-color 0.3s;
-    }
-    input:focus, select:focus, textarea:focus {
-      border-color: #007bff;
-      outline: none;
     }
     .error {
       font-size: 13px;
       color: red;
       display: none;
-      margin-top: -10px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
     button {
       width: 100%;
       padding: 14px;
-      background-color: #28a745;
+      background-color: #007bff;
       color: white;
       font-size: 16px;
-      font-weight: bold;
       border: none;
       border-radius: 12px;
-      cursor: pointer;
       margin-top: 20px;
-    }
-    .footer {
-      text-align: center;
-      margin-top: 30px;
+      cursor: pointer;
     }
     .popup {
       display: none;
       position: fixed;
-      top: 0; right: 0; bottom: 0; left: 0;
+      top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0, 0, 0, 0.6);
       justify-content: center;
       align-items: center;
@@ -91,10 +79,10 @@
     .popup-content {
       background: white;
       padding: 25px;
-      border-radius: 15px;
+      border-radius: 14px;
       text-align: center;
       max-width: 300px;
-      box-shadow: 0 0 12px rgba(0,0,0,0.25);
+      box-shadow: 0 0 12px rgba(0,0,0,0.2);
     }
     .popup-content h3 {
       color: #28a745;
@@ -106,11 +94,11 @@
 
 <div class="container">
   <div class="logo">
-    <img src="https://iili.io/FTZ5qFI.png" alt="شعار">
+    <img src="https://iili.io/FTZ5qFI.png" alt="Logo">
   </div>
   <div class="slogan">من غير ما تبيع .... تقدر تكسب 💰</div>
 
-  <h2>نموذج تسجيل العميل</h2>
+  <h2>نموذج تسجيل عميل</h2>
 
   <form id="leadForm">
     <label>اسم المسوق</label>
@@ -118,14 +106,14 @@
 
     <label>رقم هاتف المسوق</label>
     <input type="text" name="referrer_phone" id="referrerPhone" required>
-    <div class="error" id="referrerPhoneError">⚠️ يجب كتابة 11 رقم ويبدأ بـ 01</div>
+    <div class="error" id="referrerPhoneError">⚠️ يجب كتابة رقم يبدأ بـ 01 ويتكون من 11 رقم</div>
 
     <label>اسم العميل</label>
     <input type="text" name="client_name" required>
 
     <label>رقم هاتف العميل</label>
     <input type="text" name="client_phone" id="clientPhone" required>
-    <div class="error" id="clientPhoneError">⚠️ يجب كتابة 11 رقم ويبدأ بـ 01</div>
+    <div class="error" id="clientPhoneError">⚠️ يجب كتابة رقم يبدأ بـ 01 ويتكون من 11 رقم</div>
 
     <label>نوع العقار</label>
     <select name="property_type" required>
@@ -148,20 +136,13 @@
 
     <button type="submit">إرسال البيانات</button>
   </form>
-
-  <div class="footer">
-    <p>عدد العملاء المحلي: <span id="leadCount">0</span></p>
-    <button onclick="showLeads()">عرض العملاء</button>
-    <div id="leadsList"></div>
-  </div>
 </div>
 
-<!-- Popup -->
 <div class="popup" id="popup">
   <div class="popup-content">
-    <h3>✅ تم الإرسال بنجاح</h3>
+    <h3>✅ تم الإرسال</h3>
     <p>سنتواصل معك قريبًا</p>
-    <button onclick="closePopup()">تم</button>
+    <button onclick="document.getElementById('popup').style.display='none'">تم</button>
   </div>
 </div>
 
@@ -169,17 +150,13 @@
   const endpoint = "https://script.google.com/macros/s/AKfycbw0XrUPnl7Hx1pmvcjd-BSTSzXrz_r8jW6X1MtsCB5zkC_hDWjU_7hG5OZUpbvzqzsE/exec";
 
   const form = document.getElementById("leadForm");
-  const leadCount = document.getElementById("leadCount");
-  const leadsList = document.getElementById("leadsList");
-  const popup = document.getElementById("popup");
-
   const refInput = document.getElementById("referrerPhone");
   const clientInput = document.getElementById("clientPhone");
   const refError = document.getElementById("referrerPhoneError");
   const clientError = document.getElementById("clientPhoneError");
 
-  function validatePhone(value) {
-    return /^01\d{9}$/.test(value.trim());
+  function validatePhone(phone) {
+    return /^01\d{9}$/.test(phone.trim());
   }
 
   refInput.addEventListener("input", () => {
@@ -199,47 +176,21 @@
     const data = Object.fromEntries(formData.entries());
     data.timestamp = new Date().toLocaleString();
 
-    const leads = JSON.parse(localStorage.getItem("leads") || "[]");
-    leads.push(data);
-    localStorage.setItem("leads", JSON.stringify(leads));
-    updateCount();
-
     fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data)
     })
-    .then(() => {
+    .then(res => res.text())
+    .then(response => {
       form.reset();
-      popup.style.display = "flex";
+      document.getElementById("popup").style.display = "flex";
     })
-    .catch(() => {
-      alert("❌ حدث خطأ أثناء الإرسال");
+    .catch(err => {
+      alert("❌ فشل الإرسال، تأكد من الرابط أو الإعدادات");
+      console.error(err);
     });
   });
-
-  function updateCount() {
-    const leads = JSON.parse(localStorage.getItem("leads") || "[]");
-    leadCount.textContent = leads.length;
-  }
-
-  function showLeads() {
-    const leads = JSON.parse(localStorage.getItem("leads") || "[]");
-    leadsList.innerHTML = leads.length
-      ? leads.map(l => `
-        <div style="margin:10px 0; padding:10px; background:#f8f8f8; border-radius:10px;">
-          👤 ${l.client_name} - 📞 ${l.client_phone}<br>
-          🏠 ${l.property_type} - ${l.city}<br>
-          🕒 ${l.timestamp}
-        </div>`).join('')
-      : '<p>لا توجد بيانات محفوظة.</p>';
-  }
-
-  function closePopup() {
-    popup.style.display = "none";
-  }
-
-  updateCount();
 </script>
 
 </body>
