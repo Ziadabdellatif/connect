@@ -1,197 +1,40 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>تسجيل عميل</title>
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      background: #f2f2f2;
-      margin: 0;
-      padding: 20px;
-    }
-    .container {
-      max-width: 650px;
-      margin: auto;
-      background: #fff;
-      padding: 30px;
-      border-radius: 18px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.08);
-    }
-    .logo {
-      text-align: center;
-    }
-    .logo img {
-      width: 110px;
-      border-radius: 18px;
-    }
-    .slogan {
-      text-align: center;
-      font-size: 16px;
-      margin: 10px 0 25px;
-      color: #555;
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #222;
-    }
-    label {
-      display: block;
-      margin-top: 12px;
-      font-weight: bold;
-    }
-    input, select, textarea {
-      width: 100%;
-      padding: 12px;
-      margin-top: 6px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      font-size: 14px;
-    }
-    .error {
-      font-size: 13px;
-      color: red;
-      display: none;
-      margin-bottom: 8px;
-    }
-    button {
-      width: 100%;
-      padding: 14px;
-      background-color: #007bff;
-      color: white;
-      font-size: 16px;
-      border: none;
-      border-radius: 12px;
-      margin-top: 20px;
-      cursor: pointer;
-    }
-    .popup {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.6);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    .popup-content {
-      background: white;
-      padding: 25px;
-      border-radius: 14px;
-      text-align: center;
-      max-width: 300px;
-      box-shadow: 0 0 12px rgba(0,0,0,0.2);
-    }
-    .popup-content h3 {
-      color: #28a745;
-      margin-bottom: 10px;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <title>اختبار Google Script</title>
 </head>
 <body>
+  <h2>اختبار إرسال بيانات إلى Google Sheet</h2>
+  <button onclick="sendTest()">إرسال بيانات تجريبية</button>
 
-<div class="container">
-  <div class="logo">
-    <img src="https://iili.io/FTZ5qFI.png" alt="Logo">
-  </div>
-  <div class="slogan">من غير ما تبيع .... تقدر تكسب 💰</div>
+  <script>
+    const endpoint = "https://script.google.com/macros/s/AKfycbxMaLPGVG5kfrRZXZCMozIUUWNVXMaZgfeIYAFIAdfMk8hm4kCbiptCXlTUk7p1E_At/exec";
 
-  <h2>نموذج تسجيل عميل</h2>
+    function sendTest() {
+      const testData = {
+        timestamp: new Date().toLocaleString(),
+        referrer_name: "Test Referrer",
+        referrer_phone: "01111111111",
+        client_name: "Test Client",
+        client_phone: "01234567890",
+        property_type: "شقة",
+        city: "القاهرة",
+        unit_code: "U123",
+        notes: "ملاحظة تجريبية"
+      };
 
-  <form id="leadForm">
-    <label>اسم المسوق</label>
-    <input type="text" name="referrer_name" required>
-
-    <label>رقم هاتف المسوق</label>
-    <input type="text" name="referrer_phone" id="referrerPhone" required>
-    <div class="error" id="referrerPhoneError">⚠️ الرقم يجب أن يبدأ بـ 01 ويتكون من 11 رقم</div>
-
-    <label>اسم العميل</label>
-    <input type="text" name="client_name" required>
-
-    <label>رقم هاتف العميل</label>
-    <input type="text" name="client_phone" id="clientPhone" required>
-    <div class="error" id="clientPhoneError">⚠️ الرقم يجب أن يبدأ بـ 01 ويتكون من 11 رقم</div>
-
-    <label>نوع العقار</label>
-    <select name="property_type" required>
-      <option value="">اختر نوع العقار</option>
-      <option>فيلا</option>
-      <option>أرض</option>
-      <option>شقة</option>
-      <option>شاليه</option>
-      <option>تجاري</option>
-    </select>
-
-    <label>المنطقة / المدينة</label>
-    <input type="text" name="city" required>
-
-    <label>كود الوحدة</label>
-    <input type="text" name="unit_code" required>
-
-    <label>ملاحظات</label>
-    <textarea name="notes" rows="3"></textarea>
-
-    <button type="submit">إرسال</button>
-  </form>
-</div>
-
-<div class="popup" id="popup">
-  <div class="popup-content">
-    <h3>✅ تم الإرسال</h3>
-    <p>سنتواصل معك قريبًا</p>
-    <button onclick="document.getElementById('popup').style.display='none'">تم</button>
-  </div>
-</div>
-
-<script>
-  const endpoint = "https://script.google.com/macros/s/AKfycbxMaLPGVG5kfrRZXZCMozIUUWNVXMaZgfeIYAFIAdfMk8hm4kCbiptCXlTUk7p1E_At/exec";
-
-  const form = document.getElementById("leadForm");
-  const refInput = document.getElementById("referrerPhone");
-  const clientInput = document.getElementById("clientPhone");
-  const refError = document.getElementById("referrerPhoneError");
-  const clientError = document.getElementById("clientPhoneError");
-
-  function validatePhone(phone) {
-    return /^01\d{9}$/.test(phone.trim());
-  }
-
-  refInput.addEventListener("input", () => {
-    refError.style.display = validatePhone(refInput.value) ? "none" : "block";
-  });
-  clientInput.addEventListener("input", () => {
-    clientError.style.display = validatePhone(clientInput.value) ? "none" : "block";
-  });
-
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    if (!validatePhone(refInput.value)) return refError.style.display = "block";
-    if (!validatePhone(clientInput.value)) return clientError.style.display = "block";
-
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
-    data.timestamp = new Date().toLocaleString();
-
-    fetch(endpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
-    })
-    .then(res => res.text())
-    .then(response => {
-      form.reset();
-      document.getElementById("popup").style.display = "flex";
-    })
-    .catch(err => {
-      alert("❌ فشل الإرسال، تأكد من الرابط أو الإعدادات");
-      console.error(err);
-    });
-  });
-</script>
-
+      fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(testData)
+      })
+      .then(res => res.text())
+      .then(msg => alert("✅ تم: " + msg))
+      .catch(err => alert("❌ فشل الإرسال: " + err));
+    }
+  </script>
 </body>
 </html>
