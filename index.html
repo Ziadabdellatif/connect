@@ -1,80 +1,99 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>نموذج تسجيل عميل</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>تسجيل عميل</title>
   <style>
     body {
-      font-family: 'Tahoma', sans-serif;
-      background-color: #f5f5f5;
+      font-family: 'Arial', sans-serif;
+      background: #ffffff;
+      margin: 0;
       padding: 20px;
     }
-
     .container {
       max-width: 600px;
       margin: auto;
-      background-color: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
     }
-
+    .logo {
+      text-align: center;
+    }
+    .logo img {
+      width: 100px;
+      border-radius: 15px;
+    }
+    .slogan {
+      text-align: center;
+      margin: 10px 0 20px;
+      color: #444;
+      font-size: 16px;
+    }
     h2 {
       text-align: center;
       margin-bottom: 20px;
+      font-size: 22px;
     }
-
     label {
-      font-weight: bold;
       display: block;
       margin-top: 10px;
+      font-weight: bold;
     }
-
     input, select, textarea, button {
       width: 100%;
       padding: 10px;
       margin-top: 5px;
       margin-bottom: 15px;
-      border-radius: 8px;
+      border-radius: 10px;
       border: 1px solid #ccc;
       font-size: 14px;
+      box-sizing: border-box;
     }
-
     button {
       background-color: #28a745;
       color: white;
-      border: none;
+      font-weight: bold;
       cursor: pointer;
-      transition: 0.3s;
     }
-
-    button:hover {
-      background-color: #218838;
+    .footer {
+      text-align: center;
+      margin-top: 20px;
     }
-
-    .toast {
+    .popup {
+      display: none;
       position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: #28a745;
-      color: #fff;
-      padding: 12px 20px;
-      border-radius: 10px;
-      opacity: 0;
-      transition: opacity 0.4s ease-in-out;
+      top: 0; right: 0; bottom: 0; left: 0;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
       z-index: 999;
     }
-
-    .toast.show {
-      opacity: 1;
+    .popup-content {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      text-align: center;
+      max-width: 300px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    }
+    .popup-content h3 {
+      color: #28a745;
     }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <h2>تسجيل عميل جديد</h2>
+  <div class="logo">
+    <img src="https://iili.io/FTZ5qFI.png" alt="شعار">
+  </div>
+  <div class="slogan">من غير ما تبيع .... تقدر تكسب 💰</div>
+
+  <h2>نموذج تسجيل العميل</h2>
+
   <form id="leadForm">
     <label>اسم المسوق</label>
     <input type="text" name="referrer_name" required>
@@ -90,43 +109,57 @@
 
     <label>نوع العقار</label>
     <select name="property_type" required>
-      <option value="">اختر نوع العقار</option>
-      <option>شقة</option>
+      <option value="">اختر</option>
       <option>فيلا</option>
       <option>أرض</option>
+      <option>شقة</option>
+      <option>شاليه</option>
       <option>تجاري</option>
     </select>
 
-    <label>المدينة</label>
+    <label>المنطقة / المدينة</label>
     <input type="text" name="city" required>
 
     <label>كود الوحدة</label>
     <input type="text" name="unit_code" required>
 
     <label>ملاحظات</label>
-    <textarea name="notes" rows="3"></textarea>
+    <textarea name="notes"></textarea>
 
     <button type="submit">إرسال</button>
-    <button type="button" onclick="sendTestData()">إرسال بيانات تجريبية</button>
   </form>
+
+  <div class="footer">
+    <p>عدد العملاء المحلي: <span id="leadCount">0</span></p>
+    <button onclick="showLeads()">عرض العملاء</button>
+    <div id="leadsList"></div>
+  </div>
 </div>
 
-<div class="toast" id="toast">جارٍ الإرسال...</div>
+<div class="popup" id="popup">
+  <div class="popup-content">
+    <h3>✅ تم الإرسال بنجاح</h3>
+    <p>سنتواصل معك قريبًا</p>
+    <button onclick="closePopup()">تم</button>
+  </div>
+</div>
 
 <script>
-  const endpoint = "https://script.google.com/macros/s/AKfycbwAYi36Vj6VozSza49STY-2qWCk9H6ohggzO1XqTvcJbuKvgstgZG0GZgB2FAZfSkFW/exec";
+  const endpoint = "https://script.google.com/macros/s/AKfycbwEaL8tFwPxvXrd524BHjd2s78VnfObmxpkEUhZ1kgi2uNNhiULRoQnvpBVtBcb9pkypw/exec";
 
   const form = document.getElementById("leadForm");
-  const toast = document.getElementById("toast");
+  const leadCount = document.getElementById("leadCount");
+  const leadsList = document.getElementById("leadsList");
+  const popup = document.getElementById("popup");
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
 
-    const refPhone = document.getElementById("referrerPhone").value.trim();
-    const clientPhone = document.getElementById("clientPhone").value.trim();
+    const refPhone = document.getElementById("referrerPhone").value;
+    const clientPhone = document.getElementById("clientPhone").value;
 
     if (!/^01\d{9}$/.test(refPhone) || !/^01\d{9}$/.test(clientPhone)) {
-      showToast("❌ رقم الهاتف يجب أن يبدأ بـ 01 ويكون 11 رقم");
+      alert("رقم الهاتف يجب أن يبدأ بـ 01 ويتكون من 11 رقم");
       return;
     }
 
@@ -134,58 +167,49 @@
     const data = Object.fromEntries(formData.entries());
     data.timestamp = new Date().toLocaleString();
 
+    // حفظ محلي
+    const leads = JSON.parse(localStorage.getItem("leads") || "[]");
+    leads.push(data);
+    localStorage.setItem("leads", JSON.stringify(leads));
+    updateCount();
+
+    // إرسال إلى Google Script
     fetch(endpoint, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: {"Content-Type": "application/json"},
       body: JSON.stringify(data)
     })
     .then(res => res.text())
-    .then(msg => {
+    .then(() => {
       form.reset();
-      showToast("✅ " + msg);
+      popup.style.display = "flex";
     })
     .catch(() => {
-      showToast("❌ حدث خطأ أثناء الإرسال");
+      alert("❌ حدث خطأ أثناء الإرسال");
     });
   });
 
-  function showToast(message) {
-    toast.textContent = message;
-    toast.classList.add("show");
-    setTimeout(() => toast.classList.remove("show"), 3000);
+  function updateCount() {
+    const leads = JSON.parse(localStorage.getItem("leads") || "[]");
+    leadCount.textContent = leads.length;
   }
 
-  function sendTestData() {
-    const testData = {
-      referrer_name: "مسوق تجريبي",
-      referrer_phone: "01000000001",
-      client_name: "عميل تجريبي",
-      client_phone: "01000000002",
-      property_type: "شقة",
-      city: "القاهرة",
-      unit_code: "TEST-123",
-      notes: "بيانات اختبارية",
-      timestamp: new Date().toLocaleString()
-    };
-
-    fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(testData)
-    })
-    .then(res => res.text())
-    .then(msg => {
-      showToast("✅ " + msg);
-    })
-    .catch(() => {
-      showToast("❌ فشل إرسال البيانات التجريبية");
-    });
+  function showLeads() {
+    const leads = JSON.parse(localStorage.getItem("leads") || "[]");
+    leadsList.innerHTML = leads.map(lead => `
+      <div>
+        👤 ${lead.client_name} - 📞 ${lead.client_phone} <br>
+        🏠 ${lead.property_type} - ${lead.city} <br>
+        🕒 ${lead.timestamp}
+      </div>
+    `).join('') || "<p>لا يوجد عملاء.</p>";
   }
+
+  function closePopup() {
+    popup.style.display = "none";
+  }
+
+  updateCount();
 </script>
-
 </body>
 </html>
