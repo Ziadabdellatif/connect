@@ -12,7 +12,7 @@
       padding: 0;
     }
     .container {
-      max-width: 700px;
+      max-width: 800px;
       margin: 40px auto;
       background: #fff;
       padding: 30px;
@@ -80,6 +80,28 @@
       font-weight: bold;
       color: green;
     }
+    .table-container {
+      margin-top: 40px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #007bff;
+      color: white;
+    }
+    .counter {
+      margin-top: 20px;
+      font-weight: bold;
+      color: #007bff;
+    }
   </style>
 </head>
 <body>
@@ -132,6 +154,27 @@
 
     <div class="success-message" id="successMsg">✅ تم الإرسال بنجاح! سنتواصل معك قريبًا</div>
   </form>
+
+  <div class="table-container">
+    <button onclick="showData()">📄 عرض البيانات المخزنة</button>
+    <div class="counter" id="entryCount">عدد الإدخالات: 0</div>
+    <table id="dataTable" style="display:none;">
+      <thead>
+        <tr>
+          <th>الوقت</th>
+          <th>اسم المسوق</th>
+          <th>رقم المسوق</th>
+          <th>اسم العميل</th>
+          <th>رقم العميل</th>
+          <th>نوع العقار</th>
+          <th>المدينة</th>
+          <th>كود الوحدة</th>
+          <th>ملاحظات</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
 </div>
 
 <script>
@@ -155,18 +198,61 @@
   document.getElementById("leadForm").addEventListener("submit", function(e) {
     e.preventDefault();
 
-    if (!validatePhone(refInput.value)) return refError.style.display = "block";
-    if (!validatePhone(clientInput.value)) return clientError.style.display = "block";
+    if (!validatePhone(refInput.value)) {
+      refError.style.display = "block";
+      return;
+    }
+    if (!validatePhone(clientInput.value)) {
+      clientError.style.display = "block";
+      return;
+    }
 
     const formData = new FormData(this);
     const data = Object.fromEntries(formData.entries());
     data.timestamp = new Date().toLocaleString();
 
-    google.script.run.withSuccessHandler(() => {
-      document.getElementById("successMsg").style.display = "block";
-      document.getElementById("leadForm").reset();
-    }).submitForm(JSON.stringify(data));
+    let leads = JSON.parse(localStorage.getItem("leads")) || [];
+    leads.push(data);
+    localStorage.setItem("leads", JSON.stringify(leads));
+
+    document.getElementById("successMsg").style.display = "block";
+    this.reset();
+    updateEntryCount();
   });
+
+  function showData() {
+    const leads = JSON.parse(localStorage.getItem("leads")) || [];
+    const table = document.getElementById("dataTable");
+    const tbody = table.querySelector("tbody");
+    tbody.innerHTML = "";
+
+    leads.forEach(lead => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${lead.timestamp}</td>
+        <td>${lead.referrer_name}</td>
+        <td>${lead.referrer_phone}</td>
+        <td>${lead.client_name}</td>
+        <td>${lead.client_phone}</td>
+        <td>${lead.property_type}</td>
+        <td>${lead.city}</td>
+        <td>${lead.unit_code}</td>
+        <td>${lead.notes}</td>
+      `;
+      tbody.appendChild(row);
+    });
+
+    table.style.display = leads.length ? "table" : "none";
+    updateEntryCount();
+  }
+
+  function updateEntryCount() {
+    const leads = JSON.parse(localStorage.getItem("leads")) || [];
+    document.getElementById("entryCount").textContent = `عدد الإدخالات: ${leads.length}`;
+  }
+
+  // تحديث العداد عند تحميل الصفحة
+  window.onload = updateEntryCount;
 </script>
 
 </body>
