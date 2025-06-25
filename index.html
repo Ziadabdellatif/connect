@@ -5,82 +5,100 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>تسجيل عميل</title>
   <style>
+    * {box-sizing: border-box;}
     body {
       font-family: 'Arial', sans-serif;
-      background: #ffffff;
+      background: #f5f7fa;
       margin: 0;
-      padding: 20px;
+      padding: 0;
     }
     .container {
-      max-width: 600px;
-      margin: auto;
-      background: #f9f9f9;
-      padding: 20px;
-      border-radius: 16px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+      max-width: 620px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 30px 25px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
     }
     .logo {
       text-align: center;
     }
     .logo img {
-      width: 100px;
-      border-radius: 15px;
+      width: 110px;
+      border-radius: 20px;
     }
     .slogan {
       text-align: center;
-      margin: 10px 0 20px;
-      color: #444;
+      color: #666;
       font-size: 16px;
+      margin: 10px 0 25px;
     }
     h2 {
       text-align: center;
-      margin-bottom: 20px;
-      font-size: 22px;
+      color: #333;
+      margin-bottom: 25px;
     }
     label {
-      display: block;
-      margin-top: 10px;
       font-weight: bold;
+      display: block;
+      margin: 12px 0 5px;
+      color: #333;
     }
-    input, select, textarea, button {
+    input, select, textarea {
       width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      margin-bottom: 15px;
-      border-radius: 10px;
+      padding: 12px;
+      border-radius: 12px;
       border: 1px solid #ccc;
       font-size: 14px;
-      box-sizing: border-box;
+      transition: border-color 0.3s;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+    .error {
+      font-size: 13px;
+      color: red;
+      display: none;
+      margin-top: -10px;
+      margin-bottom: 10px;
     }
     button {
+      width: 100%;
+      padding: 14px;
       background-color: #28a745;
       color: white;
+      font-size: 16px;
       font-weight: bold;
+      border: none;
+      border-radius: 12px;
       cursor: pointer;
+      margin-top: 20px;
     }
     .footer {
       text-align: center;
-      margin-top: 20px;
+      margin-top: 30px;
     }
     .popup {
       display: none;
       position: fixed;
       top: 0; right: 0; bottom: 0; left: 0;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.6);
       justify-content: center;
       align-items: center;
-      z-index: 999;
+      z-index: 1000;
     }
     .popup-content {
       background: white;
       padding: 25px;
-      border-radius: 12px;
+      border-radius: 15px;
       text-align: center;
       max-width: 300px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      box-shadow: 0 0 12px rgba(0,0,0,0.25);
     }
     .popup-content h3 {
       color: #28a745;
+      margin-bottom: 10px;
     }
   </style>
 </head>
@@ -100,16 +118,18 @@
 
     <label>رقم هاتف المسوق</label>
     <input type="text" name="referrer_phone" id="referrerPhone" required>
+    <div class="error" id="referrerPhoneError">⚠️ يجب كتابة 11 رقم ويبدأ بـ 01</div>
 
     <label>اسم العميل</label>
     <input type="text" name="client_name" required>
 
     <label>رقم هاتف العميل</label>
     <input type="text" name="client_phone" id="clientPhone" required>
+    <div class="error" id="clientPhoneError">⚠️ يجب كتابة 11 رقم ويبدأ بـ 01</div>
 
     <label>نوع العقار</label>
     <select name="property_type" required>
-      <option value="">اختر</option>
+      <option value="">اختر نوع العقار</option>
       <option>فيلا</option>
       <option>أرض</option>
       <option>شقة</option>
@@ -124,9 +144,9 @@
     <input type="text" name="unit_code" required>
 
     <label>ملاحظات</label>
-    <textarea name="notes"></textarea>
+    <textarea name="notes" rows="3"></textarea>
 
-    <button type="submit">إرسال</button>
+    <button type="submit">إرسال البيانات</button>
   </form>
 
   <div class="footer">
@@ -136,6 +156,7 @@
   </div>
 </div>
 
+<!-- Popup -->
 <div class="popup" id="popup">
   <div class="popup-content">
     <h3>✅ تم الإرسال بنجاح</h3>
@@ -145,41 +166,49 @@
 </div>
 
 <script>
-  const endpoint = "https://script.google.com/macros/s/AKfycbwEaL8tFwPxvXrd524BHjd2s78VnfObmxpkEUhZ1kgi2uNNhiULRoQnvpBVtBcb9pkypw/exec";
+  const endpoint = "https://script.google.com/macros/s/AKfycbw0XrUPnl7Hx1pmvcjd-BSTSzXrz_r8jW6X1MtsCB5zkC_hDWjU_7hG5OZUpbvzqzsE/exec";
 
   const form = document.getElementById("leadForm");
   const leadCount = document.getElementById("leadCount");
   const leadsList = document.getElementById("leadsList");
   const popup = document.getElementById("popup");
 
+  const refInput = document.getElementById("referrerPhone");
+  const clientInput = document.getElementById("clientPhone");
+  const refError = document.getElementById("referrerPhoneError");
+  const clientError = document.getElementById("clientPhoneError");
+
+  function validatePhone(value) {
+    return /^01\d{9}$/.test(value.trim());
+  }
+
+  refInput.addEventListener("input", () => {
+    refError.style.display = validatePhone(refInput.value) ? "none" : "block";
+  });
+  clientInput.addEventListener("input", () => {
+    clientError.style.display = validatePhone(clientInput.value) ? "none" : "block";
+  });
+
   form.addEventListener("submit", function (e) {
     e.preventDefault();
 
-    const refPhone = document.getElementById("referrerPhone").value;
-    const clientPhone = document.getElementById("clientPhone").value;
-
-    if (!/^01\d{9}$/.test(refPhone) || !/^01\d{9}$/.test(clientPhone)) {
-      alert("رقم الهاتف يجب أن يبدأ بـ 01 ويتكون من 11 رقم");
-      return;
-    }
+    if (!validatePhone(refInput.value)) return refError.style.display = "block";
+    if (!validatePhone(clientInput.value)) return clientError.style.display = "block";
 
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
     data.timestamp = new Date().toLocaleString();
 
-    // حفظ محلي
     const leads = JSON.parse(localStorage.getItem("leads") || "[]");
     leads.push(data);
     localStorage.setItem("leads", JSON.stringify(leads));
     updateCount();
 
-    // إرسال إلى Google Script
     fetch(endpoint, {
       method: "POST",
-      headers: {"Content-Type": "application/json"},
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data)
     })
-    .then(res => res.text())
     .then(() => {
       form.reset();
       popup.style.display = "flex";
@@ -196,13 +225,14 @@
 
   function showLeads() {
     const leads = JSON.parse(localStorage.getItem("leads") || "[]");
-    leadsList.innerHTML = leads.map(lead => `
-      <div>
-        👤 ${lead.client_name} - 📞 ${lead.client_phone} <br>
-        🏠 ${lead.property_type} - ${lead.city} <br>
-        🕒 ${lead.timestamp}
-      </div>
-    `).join('') || "<p>لا يوجد عملاء.</p>";
+    leadsList.innerHTML = leads.length
+      ? leads.map(l => `
+        <div style="margin:10px 0; padding:10px; background:#f8f8f8; border-radius:10px;">
+          👤 ${l.client_name} - 📞 ${l.client_phone}<br>
+          🏠 ${l.property_type} - ${l.city}<br>
+          🕒 ${l.timestamp}
+        </div>`).join('')
+      : '<p>لا توجد بيانات محفوظة.</p>';
   }
 
   function closePopup() {
@@ -211,5 +241,6 @@
 
   updateCount();
 </script>
+
 </body>
 </html>
