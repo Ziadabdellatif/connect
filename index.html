@@ -52,6 +52,7 @@
       font-weight: bold;
       border: none;
       transition: background-color 0.3s;
+      cursor: pointer;
     }
     button:hover {
       background-color: #0056b3;
@@ -124,6 +125,8 @@
 
   <div class="footer">
     💼 عدد العملاء المحلي: <span id="leadCount">0</span>
+    <br><br>
+    <button onclick="sendTestData()">إرسال بيانات تجريبية</button>
   </div>
 </div>
 
@@ -179,6 +182,37 @@
     toast.textContent = msg;
     toast.classList.add("show");
     setTimeout(() => toast.classList.remove("show"), 3000);
+  }
+
+  function sendTestData() {
+    const testData = {
+      referrer_name: "المسوق التجريبي",
+      referrer_phone: "01000000001",
+      client_name: "عميل تجريبي",
+      client_phone: "01000000002",
+      property_type: "شقة",
+      city: "الرياض",
+      unit_code: "TEST123",
+      notes: "هذا مجرد اختبار 🔧",
+      timestamp: new Date().toLocaleString()
+    };
+
+    fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(testData)
+    })
+    .then(res => res.text())
+    .then(msg => {
+      showToast("✅ " + msg);
+      const leads = JSON.parse(localStorage.getItem("leads") || "[]");
+      leads.push(testData);
+      localStorage.setItem("leads", JSON.stringify(leads));
+      updateCount();
+    })
+    .catch(() => {
+      showToast("❌ فشل الإرسال التجريبي");
+    });
   }
 
   updateCount();
