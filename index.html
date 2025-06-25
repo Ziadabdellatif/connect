@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>نموذج تسجيل العملاء</title>
+  <title>تسجيل عميل جديد</title>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal&display=swap" rel="stylesheet" />
   <style>
     body {
       margin: 0;
       font-family: 'Tajawal', sans-serif;
-      background-color: #f2f2f2;
+      background-color: #f3f3f3;
       color: #333;
     }
     .container {
@@ -18,7 +18,7 @@
       background: #fff;
       border-radius: 12px;
       padding: 2rem;
-      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+      box-shadow: 0 0 10px rgba(0,0,0,0.08);
     }
     h2 {
       text-align: center;
@@ -36,7 +36,6 @@
       border: 1px solid #ccc;
       margin-bottom: 1rem;
       font-size: 1rem;
-      font-family: inherit;
     }
     button {
       background-color: #4CAF50;
@@ -46,6 +45,7 @@
       border-radius: 8px;
       font-size: 1rem;
       cursor: pointer;
+      width: 100%;
     }
     button:hover {
       background-color: #45a049;
@@ -78,16 +78,6 @@
       text-align: center;
       font-size: 1.2rem;
     }
-    .leads-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 1rem;
-    }
-    .leads-table th, .leads-table td {
-      border: 1px solid #ccc;
-      padding: 0.5rem;
-      text-align: center;
-    }
     .whatsapp-support {
       text-align: center;
       margin: 2rem 0;
@@ -107,13 +97,13 @@
 <body>
 
   <div class="container">
-    <h2>نموذج تسجيل العملاء</h2>
+    <h2>نموذج تسجيل عميل جديد</h2>
     <form id="leadForm">
-      <label for="marketerName">اسم المسوق</label>
-      <input type="text" id="marketerName" name="marketerName" required />
+      <label for="referrerName">اسم المُحيل</label>
+      <input type="text" id="referrerName" name="referrerName" required />
 
-      <label for="marketerPhone">رقم هاتف المسوق</label>
-      <input type="tel" id="marketerPhone" name="marketerPhone" required />
+      <label for="referrerPhone">رقم هاتف المُحيل</label>
+      <input type="tel" id="referrerPhone" name="referrerPhone" required />
 
       <label for="clientName">اسم العميل</label>
       <input type="text" id="clientName" name="clientName" required />
@@ -122,7 +112,15 @@
       <input type="tel" id="clientPhone" name="clientPhone" required />
 
       <label for="propertyType">نوع العقار</label>
-      <input type="text" id="propertyType" name="propertyType" required />
+      <select id="propertyType" name="propertyType" required>
+        <option value="" disabled selected>اختر نوع العقار</option>
+        <option>شقة</option>
+        <option>أرض</option>
+        <option>شاليه</option>
+        <option>فيلا</option>
+        <option>دوبلكس</option>
+        <option>تجاري</option>
+      </select>
 
       <label for="areaCity">المنطقة / المدينة</label>
       <input type="text" id="areaCity" name="areaCity" required />
@@ -133,7 +131,7 @@
       <label for="notes">ملاحظات</label>
       <textarea id="notes" name="notes" rows="3"></textarea>
 
-      <button type="submit">إرسال</button>
+      <button type="submit">📤 إرسال البيانات</button>
     </form>
 
     <div class="lead-counter" id="leadCounter">إجمالي العملاء: 0</div>
@@ -142,9 +140,7 @@
   </div>
 
   <div class="modal" id="successModal">
-    <div class="modal-content">
-      ✅ تم إرسال البيانات بنجاح
-    </div>
+    <div class="modal-content">✅ تم إرسال البيانات بنجاح</div>
   </div>
 
   <div class="whatsapp-support">
@@ -184,12 +180,12 @@
         return;
       }
       let tableHTML = '<table class="leads-table"><thead><tr>';
-      tableHTML += '<th>اسم المسوق</th><th>رقم المسوق</th><th>اسم العميل</th><th>رقم العميل</th><th>نوع العقار</th><th>المنطقة</th><th>كود الوحدة</th><th>ملاحظات</th><th>الوقت</th>';
+      tableHTML += '<th>الاسم</th><th>رقم المُحيل</th><th>العميل</th><th>رقم العميل</th><th>العقار</th><th>المنطقة</th><th>الكود</th><th>ملاحظات</th><th>الوقت</th>';
       tableHTML += '</tr></thead><tbody>';
       leads.forEach(lead => {
         tableHTML += `<tr>
-          <td>${lead.marketerName}</td>
-          <td>${lead.marketerPhone}</td>
+          <td>${lead.referrerName}</td>
+          <td>${lead.referrerPhone}</td>
           <td>${lead.clientName}</td>
           <td>${lead.clientPhone}</td>
           <td>${lead.propertyType}</td>
@@ -206,8 +202,8 @@
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const data = {
-        marketerName: form.marketerName.value,
-        marketerPhone: form.marketerPhone.value,
+        referrerName: form.referrerName.value,
+        referrerPhone: form.referrerPhone.value,
         clientName: form.clientName.value,
         clientPhone: form.clientPhone.value,
         propertyType: form.propertyType.value,
@@ -235,7 +231,6 @@
 
     viewLeadsBtn.addEventListener('click', displayLeads);
 
-    // Initialize
     updateLeadCounter();
   </script>
 
