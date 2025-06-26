@@ -41,14 +41,21 @@
 
     .logo img {
       max-width: 100px;
-      border-radius: 50%;
+      border-radius: 20%;
       border: 3px solid var(--secondary);
     }
 
     h2 {
       text-align: center;
-      color: var(--primary);
+      color: #000;
+      margin-bottom: 0.5rem;
+    }
+
+    .slogan {
+      text-align: center;
       margin-bottom: 2rem;
+      font-weight: bold;
+      font-size: 1rem;
     }
 
     label {
@@ -65,11 +72,14 @@
       border-radius: 10px;
       border: 1px solid #dcdcdc;
       background: #f9f9f9;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+      transition: border 0.3s ease, box-shadow 0.3s ease;
     }
 
     input:focus, select:focus, textarea:focus {
       border-color: var(--primary);
       outline: none;
+      box-shadow: 0 0 0 2px rgba(44, 122, 123, 0.2);
     }
 
     button {
@@ -142,24 +152,6 @@
       font-size: 0.85rem;
       display: none;
     }
-
-    @media (max-width: 600px) {
-      .container {
-        margin: 1rem;
-        padding: 1.5rem;
-      }
-    }
-  @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    #submitBtn.loading::before {
-      content: '💸';
-      animation: spin 1s linear infinite;
-      display: inline-block;
-      margin-left: 0.5rem;
-    }
   </style>
 </head>
 <body>
@@ -167,22 +159,22 @@
     <div class="logo">
       <img src="https://iili.io/FuT8Alt.png" alt="Logo">
     </div>
+    <p class="slogan">من غير ما تبيع... هتكسب 💸</p>
     <h2>تسجيل عميل جديد</h2>
     <form id="leadForm">
+      <!-- marketer info -->
       <label for="referrerName">اسم المسوق</label>
       <input type="text" id="referrerName" required>
-
       <label for="referrerPhone">رقم هاتف المسوق</label>
       <input type="tel" id="referrerPhone" required>
-      <div id="refPhoneWarning" class="phone-warning">⚠️ الرقم يجب أن يبدأ بـ 01 ويتكون من 11 رقمًا</div>
-
+      <div id="refPhoneWarning" class="phone-warning">⚠️ يجب أن يبدأ الرقم بـ 01 ويتكون من 11 رقمًا</div>
+      <!-- client info -->
       <label for="clientName">اسم العميل</label>
       <input type="text" id="clientName" required>
-
       <label for="clientPhone">رقم هاتف العميل</label>
       <input type="tel" id="clientPhone" required>
-      <div id="clientPhoneWarning" class="phone-warning">⚠️ الرقم يجب أن يبدأ بـ 01 ويتكون من 11 رقمًا</div>
-
+      <div id="clientPhoneWarning" class="phone-warning">⚠️ يجب أن يبدأ الرقم بـ 01 ويتكون من 11 رقمًا</div>
+      <!-- property info -->
       <label for="propertyType">نوع العقار</label>
       <select id="propertyType" required>
         <option disabled selected>اختر نوع العقار</option>
@@ -193,34 +185,28 @@
         <option>دوبلكس</option>
         <option>تجاري</option>
       </select>
-
       <label for="areaCity">المنطقة / المدينة</label>
       <input type="text" id="areaCity" required>
-
       <label for="unitCode">كود الوحدة</label>
       <input type="text" id="unitCode" required>
-
       <label for="notes">ملاحظات</label>
       <textarea id="notes" rows="3"></textarea>
-
       <button type="submit" id="submitBtn">💰 تسجيل</button>
     </form>
   </div>
 
-  <!-- Success Modal -->
   <div class="modal" id="successModal">
     <div class="modal-content modal-success">تم إرسال البيانات بنجاح ✅</div>
   </div>
-
-  <!-- Error Modal -->
   <div class="modal" id="errorModal">
     <div class="modal-content modal-error">حدث خطأ أثناء الإرسال، يرجى المحاولة مرة أخرى أو التواصل مع الدعم.</div>
   </div>
-
-  <!-- Confirmation Modal -->
   <div class="modal" id="confirmModal">
     <div class="modal-content modal-confirm"></div>
   </div>
+
+  <audio id="successSound" src="https://cdn.pixabay.com/download/audio/2022/03/28/audio_a63a1b2cb9.mp3?filename=cash-register-14601.mp3" preload="auto"></audio>
+  <audio id="errorSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_960b7f8619.mp3" preload="auto"></audio>
 
   <script>
     const form = document.getElementById('leadForm');
@@ -238,9 +224,7 @@
       const modal = document.getElementById(modalId);
       modal.style.display = 'block';
       if (modalId !== 'confirmModal') {
-        setTimeout(() => {
-          modal.style.display = 'none';
-        }, 3000);
+        setTimeout(() => { modal.style.display = 'none'; }, 3000);
       }
     }
 
@@ -254,17 +238,12 @@
 
     form.addEventListener('submit', (e) => {
       e.preventDefault();
+
       const refPhone = phoneInput.value.trim();
       const clientPhone = form.clientPhone.value.trim();
-
-      if (!validatePhone(refPhone)) {
-        phoneWarning.style.display = 'block';
-        return;
-      }
-
+      if (!validatePhone(refPhone)) { phoneWarning.style.display = 'block'; return; }
       if (!validatePhone(clientPhone)) {
-        document.getElementById('clientPhoneWarning').style.display = 'block';
-        return;
+        document.getElementById('clientPhoneWarning').style.display = 'block'; return;
       }
 
       latestFormData = {
@@ -305,25 +284,24 @@
           yesBtn.addEventListener('click', async () => {
             document.getElementById('confirmModal').style.display = 'none';
             const submitBtn = document.getElementById('submitBtn');
-            submitBtn.classList.add('loading');
             submitBtn.innerHTML = 'جاري التسجيل...';
+            submitBtn.disabled = true;
             try {
               await fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(latestFormData)
               });
-
               document.getElementById('successSound').play();
               showModal("successModal");
               form.reset();
-              submitBtn.classList.remove('loading');
+              submitBtn.disabled = false;
               submitBtn.innerHTML = '💰 تسجيل';
               document.getElementById('referrerPhone').value = latestFormData.referrerPhone;
             } catch {
               document.getElementById('errorSound').play();
               showModal("errorModal");
-              submitBtn.classList.remove('loading');
+              submitBtn.disabled = false;
               submitBtn.innerHTML = '💰 تسجيل';
             }
           });
@@ -335,7 +313,5 @@
       }, 100);
     });
   </script>
-<audio id="successSound" src="https://cdn.pixabay.com/download/audio/2022/03/28/audio_a63a1b2cb9.mp3?filename=cash-register-14601.mp3" preload="auto"></audio>
-<audio id="errorSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_960b7f8619.mp3" preload="auto"></audio>
 </body>
 </html>
